@@ -1,0 +1,12 @@
+---
+deployment:
+  tasks:
+    - export ROOTDEPLOYPATH=/home/mackingsemp/public_html/members.mackingsemp.com/
+    - export APPDEPLOYPATH=/home/mackingsemp/public_html/members.mackingsemp.com/app/
+    - export CONFIGDEPLOYPATH=/home/mackingsemp/public_html/members.mackingsemp.com/app/Config/
+    - /bin/cp -r ./public/assets/ $ROOTDEPLOYPATH
+    - /bin/cp -r ./uploads/ $ROOTDEPLOYPATH
+    - /bin/cp -r ./app/Controllers/ $APPDEPLOYPATH
+    - /bin/cp -r ./app/Models/ $APPDEPLOYPATH
+    - /bin/cp -r ./app/Views/ $APPDEPLOYPATH
+    - /bin/cp ./app/Config/Routes.php $CONFIGDEPLOYPATH
