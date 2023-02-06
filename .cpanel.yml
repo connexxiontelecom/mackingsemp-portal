@@ -4,9 +4,9 @@ deployment:
     - export ROOTDEPLOYPATH=/home/mackingsemp/public_html/members.mackingsemp.com/
     - export APPDEPLOYPATH=/home/mackingsemp/public_html/members.mackingsemp.com/app/
     - export CONFIGDEPLOYPATH=/home/mackingsemp/public_html/members.mackingsemp.com/app/Config/
-    - /bin/cp -r ./home/mackingsemp/repositories/mackingsemp-portal/public/assets/ $ROOTDEPLOYPATH
-    - /bin/cp -r ./home/mackingsemp/repositories/mackingsemp-portal/uploads/ $ROOTDEPLOYPATH
-    - /bin/cp -r ./home/mackingsemp/repositories/mackingsemp-portal/app/Controllers/ $APPDEPLOYPATH
-    - /bin/cp -r ./home/mackingsemp/repositories/mackingsemp-portal/app/Models/ $APPDEPLOYPATH
-    - /bin/cp -r ./home/mackingsemp/repositories/mackingsemp-portal/app/Views/ $APPDEPLOYPATH
-    - /bin/cp ./home/mackingsemp/repositories/mackingsemp-portal/app/Config/Routes.php $CONFIGDEPLOYPATH
+    - /bin/cp -r /home/mackingsemp/repositories/mackingsemp-portal/public/assets/ $ROOTDEPLOYPATH
+    - /bin/cp -r /home/mackingsemp/repositories/mackingsemp-portal/uploads/ $ROOTDEPLOYPATH
+    - /bin/cp -r /home/mackingsemp/repositories/mackingsemp-portal/app/Controllers/ $APPDEPLOYPATH
+    - /bin/cp -r /home/mackingsemp/repositories/mackingsemp-portal/app/Models/ $APPDEPLOYPATH
+    - /bin/cp -r /home/mackingsemp/repositories/mackingsemp-portal/app/Views/ $APPDEPLOYPATH
+    - /bin/cp /home/mackingsemp/repositories/mackingsemp-portal/app/Config/Routes.php $CONFIGDEPLOYPATH
