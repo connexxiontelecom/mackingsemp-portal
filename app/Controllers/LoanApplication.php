@@ -107,7 +107,6 @@ class LoanApplication extends BaseController
                 if ($staff_status == 2) {
                     $post_data = $this->request->getPost();
                     if ($post_data) {
-                        print_r($post_data);
                         $loan_setup_id = $post_data['loan_type'];
                         $post_data['loan_duration_m'] === 'default' ? $loan_duration = $post_data['loan_duration_d'] : $loan_duration = $post_data['loan_duration_m'];
                         $loan_amount = $post_data['loan_amount'];
