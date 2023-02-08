@@ -45,6 +45,7 @@ $routes->get('finished-loans/view-finished-loan/(:num)', 'FinishedLoans::view_fi
 $routes->get('loan-application', 'LoanApplication::index');
 $routes->get('loan-application/get-loan-setup-details/(:any)', 'LoanApplication::get_loan_setup_details/$1');
 $routes->post('loan-application/check-guarantor', 'LoanApplication::check_guarantor');
+$routes->get('loan-application/check-external-guarantor', 'LoanApplication::search_external_guarantor');
 $routes->post('loan-application/submit-application', 'LoanApplication::submit_loan_application');
 $routes->post('loan-application/confirm-guarantor', 'LoanApplication::confirm_guarantor');
 $routes->post('loan-application/reject-guarantor', 'LoanApplication::reject_guarantor');

@@ -49,6 +49,7 @@ class Auth extends BaseController
                         'status' => $cooperator['cooperator_status'],
                         'regular_savings' => $this->_get_regular_savings_amount($cooperator['cooperator_staff_id']),
                         'savings_types_amounts_list' => $this->_get_savings_types_amounts($cooperator['cooperator_staff_id']),
+                        'group' => $this->groupModel->where('gs_id', $cooperator['cooperator_group_id'])->first(),
                         'active' => true
                     );
                     $this->session->set($user_data);

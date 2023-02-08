@@ -35,9 +35,32 @@ class LoanApplication extends BaseController
         if ($this->session->active) {
             // @TODO refactor method to use Request pattern
             $loan_setup_details = $this->loanSetupModel->find($loan_setup_id);
+            $loan_setup_details['group'] = $this->session->get('group');
+            $loan_setup_details['int_duration'] = $this->loanInterestDurationModel->where('lid_loan_type_id', $loan_setup_id)->findAll();
+
+            if ($loan_setup_details['insurance_fee'])
+                $loan_setup_details['insurance'] = $this->loanFeesSetup->where('lf_type', 3)->findAll();
+            if ($loan_setup_details['mgt_fee'])
+                $loan_setup_details['management'] = $this->loanFeesSetup->where('lf_type', 2)->findAll();
+            if ($loan_setup_details['equity_fee'])
+                $loan_setup_details['equity'] = $this->loanFeesSetup->where('lf_type', 1)->findAll();
             return json_encode($loan_setup_details);
         }
         return redirect('auth/login');
+    }
+
+    function search_external_guarantor()
+    {
+        $value = $_GET['term'];
+        if (!empty($value)) {
+            $guarantors = $this->externalGuarantorModel->search_guarantors($value);
+            $data = array();
+            foreach ($guarantors as $guarantor) {
+                $data[] = $guarantor->eg_id . ' - ' . $guarantor->eg_first_name . ' ' . $guarantor->eg_last_name . ' (' . $guarantor->eg_email . ')';
+            }
+            echo json_encode($data);
+            die;
+        }
     }
 
     function check_guarantor()
@@ -84,24 +107,13 @@ class LoanApplication extends BaseController
                 if ($staff_status == 2) {
                     $post_data = $this->request->getPost();
                     if ($post_data) {
+                        print_r($post_data);
                         $loan_setup_id = $post_data['loan_type'];
-                        $loan_duration = $post_data['loan_duration'];
+                        $post_data['loan_duration_m'] === 'default' ? $loan_duration = $post_data['loan_duration_d'] : $loan_duration = $post_data['loan_duration_m'];
                         $loan_amount = $post_data['loan_amount'];
                         $guarantor_1 = $post_data['guarantor_1'];
                         $guarantor_2 = $post_data['guarantor_2'];
-                        $filename = null;
-                        $file = $this->request->getFile('loan_attachment');
-                        if ($file->isValid() && !$file->hasMoved()) {
-//                $extension = $file->guessExtension();
-                            $filename = $file->getRandomName();
-                            $file->move('uploads/loan-attachments', $filename);
-                            // @TODO send file to admin service
-                        } else {
-                            $response_data['success'] = false;
-                            $response_data['msg'] = 'The loan attachment is required';
-                            return $this->response->setJSON($response_data);
-                        }
-                        $response_data = $this->_submit_loan_application($loan_setup_id, $loan_amount, $loan_duration, $guarantor_1, $guarantor_2, $filename);
+                        $response_data = $this->_submit_loan_application($loan_setup_id, $loan_amount, $loan_duration, $guarantor_1, $guarantor_2);
                         return $this->response->setJSON($response_data);
                     }
                 } else {
@@ -191,7 +203,7 @@ class LoanApplication extends BaseController
         return redirect('auth/login');
     }
 
-    private function _submit_loan_application($loan_setup_id, $loan_amount, $loan_duration, $guarantor_1, $guarantor_2, $filename): array
+    private function _submit_loan_application($loan_setup_id, $loan_amount, $loan_duration, $guarantor_1, $guarantor_2): array
     {
         $staff_id = $this->session->get('staff_id');
         $firstname = $this->session->get('firstname');
@@ -199,6 +211,7 @@ class LoanApplication extends BaseController
         $othername = $this->session->get('othername');
         $waiver_charge = 0;
         $allowed_loan = 0;
+        $interest_rate = 0;
 
         $response_data = array();
         if (!$loan_setup_id || $loan_setup_id == 'default') {
@@ -210,11 +223,6 @@ class LoanApplication extends BaseController
         // @TODO do all checks in here and submit loan application
         if ($loan_setup_details) {
             // check if user has been approved longer than the loan age qualification
-            //   $today = date_create(strval(date('Y-m-d')));
-            //   $user_approved_date = date_create(strval($this->session->get('approved_date')));
-            //   $months_difference = date_diff($user_approved_date, $today)->format('%m');
-
-
             $start = new DateTime($this->session->get('approved_date'));
             $end = new DateTime(date('Y-m-d'));
             $diff = $start->diff($end);
@@ -226,8 +234,7 @@ class LoanApplication extends BaseController
 
             if ($months_difference <= $loan_setup_details['age_qualification']) {
                 $response_data['success'] = false;
-                //$response_data['msg'] = 'You have not been a member long enough to apply';
-                $response_data['msg'] = $months_difference;
+                $response_data['msg'] = 'You have not been a member long enough to apply';
                 return $response_data;
             }
             // check if loan duration is valid
@@ -236,56 +243,46 @@ class LoanApplication extends BaseController
                 $response_data['msg'] = 'The loan duration is required';
                 return $response_data;
             }
-            if ($loan_duration > $loan_setup_details['max_repayment_periods']) {
-                $response_data['success'] = false;
-                $response_data['msg'] = 'The loan duration should not exceed the maximum repayment periods';
-                return $response_data;
-            }
             // check if loan amount is valid
             if (!$loan_amount) {
                 $response_data['success'] = false;
                 $response_data['msg'] = 'The loan amount is required';
                 return $response_data;
             }
-            if ($loan_amount < $loan_setup_details['min_credit_limit'] || $loan_amount > $loan_setup_details['max_credit_limit']) {
-                $response_data['success'] = false;
-                $response_data['msg'] = 'The loan amount should fall within the credit limit range';
-                return $response_data;
+
+            $internal_guarantor = $this->cooperatorModel->where('cooperator_staff_id', $guarantor_1)->first();
+
+            $external_guarantor_id = explode('-', $guarantor_2)[0];
+            $external_guarantor = $this->externalGuarantorModel->find($external_guarantor_id);
+
+            $load_duration_type = $loan_setup_details['duration_type'];
+            if ($load_duration_type === 'M') {
+                $loan_interest_duration = $this->loanInterestDurationModel->find($loan_duration);
+                $loan_duration = $loan_interest_duration['lid_duration'];
+                $interest_rate = $loan_interest_duration['lid_rate'];
+            } else {
+                $loan_interest_duration = $this->loanInterestDurationModel->where('lid_loan_type_id', $loan_setup_id)->first();
+                $interest_rate = $loan_interest_duration['lid_rate'];
             }
-            // check loan PSR
-            if ($loan_setup_details['psr'] == 1) {
-                $regular_savings_amount = $this->_get_regular_savings_amount($staff_id);
-                $psr_amount = ($loan_setup_details['psr_value'] / 100) * $loan_amount;
-                $outstanding_loans = $this->_get_user_loans(0);
-                $total_encumbrance = 0;
-                foreach ($outstanding_loans as $outstanding_loan) {
-                    $total_encumbrance += $outstanding_loan['loan_encumbrance_amount'];
-                }
-                $free_savings_balance = $regular_savings_amount['amount'] - $total_encumbrance;
-                if ($psr_amount > $free_savings_balance) {
-                    $allowed_loan = $free_savings_balance / ($loan_setup_details['psr_value'] / 100);
-                    $waiver_charge = ($loan_amount - $allowed_loan) * (10 / 100);
-                }
-            }
+
             $loan_application_data = array(
                 'staff_id' => $staff_id,
                 'name' => $firstname . ' ' . $othername . ' ' . $lastname,
-                'guarantor' => $guarantor_1,
-                'guarantor_2' => $guarantor_2,
+                'guarantor' => $internal_guarantor['cooperator_staff_id'] ?? null,
+                'guarantor_2' => $external_guarantor['eg_id'],
                 'loan_type' => $loan_setup_id,
                 'duration' => $loan_duration,
+                'interest_rate' => $interest_rate ?? 0,
                 'amount' => $loan_amount,
                 'applied_date' => date('Y-m-d H:i:s'),
-                'attachment' => $filename,
                 'waiver' => $waiver_charge,
                 'encumbrance_amount' => $allowed_loan
             );
             $loan_application_id = $this->loanApplicationModel->insert($loan_application_data);
             $this->_update_loan_guarantors($loan_application_id, $guarantor_1, $staff_id);
-            $this->_update_loan_guarantors($loan_application_id, $guarantor_2, $staff_id);
+//            $this->_update_loan_guarantors($loan_application_id, $guarantor_2, $staff_id);
             $response_data['success'] = true;
-            $response_data['msg'] = 'You have successfully applied for a ' . number_format($loan_amount, 2) . '
-       amount loan for ' . $loan_duration . ' months. Your chosen guarantors have been notified for their approval.';
+            $response_data['msg'] = 'You have successfully applied for a loan';
             return $response_data;
         }
         $response_data['success'] = false;

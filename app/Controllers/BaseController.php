@@ -9,9 +9,12 @@ use App\Models\ContributionTypeModel;
 use App\Models\CoopBankModel;
 use App\Models\CooperatorModel;
 use App\Models\DepartmentModel;
+use App\Models\ExternalGuarantorModel;
 use App\Models\GroupModel;
 use App\Models\LoanApplicationModel;
+use App\Models\LoanFeesSetup;
 use App\Models\LoanGuarantorModel;
+use App\Models\LoanInterestDuration;
 use App\Models\LoanModel;
 use App\Models\LoanSetupModel;
 use App\Models\LocationModel;
@@ -58,9 +61,12 @@ class BaseController extends Controller
     protected $coopBankModel;
     protected $cooperatorModel;
     protected $departmentModel;
+    protected $externalGuarantorModel;
     protected $groupModel;
     protected $loanApplicationModel;
+    protected $loanFeesSetup;
     protected $loanGuarantorModel;
+    protected $loanInterestDurationModel;
     protected $loanModel;
     protected $loanSetupModel;
     protected $locationModel;
@@ -99,9 +105,12 @@ class BaseController extends Controller
         $this->coopBankModel = new CoopBankModel();
         $this->cooperatorModel = new CooperatorModel();
         $this->departmentModel = new DepartmentModel();
+        $this->externalGuarantorModel = new ExternalGuarantorModel();
         $this->groupModel = new GroupModel();
         $this->loanApplicationModel = new LoanApplicationModel();
+        $this->loanFeesSetup = new LoanFeesSetup();
         $this->loanGuarantorModel = new LoanGuarantorModel();
+        $this->loanInterestDurationModel = new LoanInterestDuration();
         $this->loanModel = new LoanModel();
         $this->loanSetupModel = new LoanSetupModel();
         $this->locationModel = new LocationModel();
@@ -223,7 +232,6 @@ class BaseController extends Controller
     {
 
         $savings_types = $this->_get_savings_types($staff_id);
-
         $savings_types_amounts = array();
         foreach ($savings_types as $savings_type) {
             $total_dr = 0;

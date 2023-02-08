@@ -20,22 +20,23 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
         integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="/assets/js/jquery-ui.js"></script>
 <script>
 
-  function exportPdf(filename) {
-    const source = document.getElementById('print')
-    const options = {
-      margin: 0,
-      filename,
-      pagebreak: {mode: 'avoid-all'},
-      html2canvas: {
-        scale: 2,
-        height: 1000
-      },
-      jsPDF: {unit: 'in', format: 'a4', orientation: 'portrait'}
+    function exportPdf(filename) {
+        const source = document.getElementById('print')
+        const options = {
+            margin: 0,
+            filename,
+            pagebreak: {mode: 'avoid-all'},
+            html2canvas: {
+                scale: 2,
+                height: 1000
+            },
+            jsPDF: {unit: 'in', format: 'a4', orientation: 'portrait'}
+        }
+        html2pdf().set(options).from(source).save()
     }
-    html2pdf().set(options).from(source).save()
-  }
 
 
 </script>
