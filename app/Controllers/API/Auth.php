@@ -43,10 +43,9 @@ class Auth extends ResourceController
             if ($passwordResetToken) $data['id'] = $passwordResetToken['id'];
             $passwordResetModel->save($data);
 
-            $emailService->setFrom('info@mackingsemp.com', 'Mackingsemp ICOOP');
+            $emailService->setFrom('support@connexxiontelecom.com', 'ICOOP by Connexxion Telecom');
             $emailService->setTo($email);
-            $emailService->setSubject('Your Registration OTP');
-            $emailService->setMailType('html');
+            $emailService->setSubject('Your Mobile Platform Registration OTP');
             $mail_data = [
                 'user' => $cooperator['cooperator_first_name'] . ' ' . $cooperator['cooperator_last_name'],
                 'token' => $plaintext,
