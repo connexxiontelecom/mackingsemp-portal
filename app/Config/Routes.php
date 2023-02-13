@@ -84,6 +84,8 @@ $routes->get('logout', 'Auth::logout');
 
 // API Routes for mobile
 $routes->post('api/auth/register', 'API\Auth::post_register');
+$routes->patch('api/auth/register', 'API\Auth::patch_register');
+$routes->post('api/auth/login', 'API\Auth::post_login');
 
 /*
  * --------------------------------------------------------------------
