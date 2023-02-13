@@ -82,6 +82,9 @@ $routes->post('login', 'Auth::auth_login');
 $routes->post('membership', 'Auth::auth_membership');
 $routes->get('logout', 'Auth::logout');
 
+// API Routes for mobile
+$routes->post('api/auth/register', 'API\Auth::post_register');
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing
