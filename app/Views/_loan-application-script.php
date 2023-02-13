@@ -79,76 +79,37 @@
                         if (equity && equity.length) {
                             $('#loan-details-list').append(`
                                 <li id="equity-req">
-                                    Equity Fee Requirement <br>
+                                    Equity Fee <b>Required</b>
                                 </li>
                             `)
-                            equity.forEach(eq => {
-                                let rate, from, to
-                                const {lf_from, lf_to, lf_rate, lf_rate_type} = eq
-                                if (lf_rate_type === '1') rate = `${lf_rate}%`
-                                else rate = `N${lf_rate}`
-                                from = parseInt(lf_from).toLocaleString()
-                                to = parseInt(lf_to).toLocaleString()
-
-                                $('#equity-req').append(`
-                                    <small class="">N${from} to N${to} - ${rate}</small>
-                                    <br>
-                                `)
-                            })
                         }
 
                         if (management && management.length) {
                             $('#loan-details-list').append(`
                                 <li id="management-req">
-                                    Management Fee Requirement <br>
+                                    Management Fee <b>Required</b>
                                 </li>
                             `)
-                            management.forEach(eq => {
-                                let rate, from, to
-                                const {lf_from, lf_to, lf_rate, lf_rate_type} = eq
-                                if (lf_rate_type === '1') rate = `${lf_rate}%`
-                                else rate = `N${lf_rate}`
-                                from = parseInt(lf_from).toLocaleString()
-                                to = parseInt(lf_to).toLocaleString()
-
-                                $('#management-req').append(`
-                                    <small class="">N${from} to N${to} - ${rate}</small>
-                                    <br>
-                                `)
-                            })
                         }
 
                         if (insurance && insurance.length) {
                             $('#loan-details-list').append(`
                                 <li id="insurance-req">
-                                    Insurance Fee Requirement <br>
+                                    Insurance Fee <b>Required</b>
                                 </li>
                             `)
-                            insurance.forEach(eq => {
-                                let rate, from, to
-                                const {lf_from, lf_to, lf_rate, lf_rate_type} = eq
-                                if (lf_rate_type === '1') rate = `${lf_rate}%`
-                                else rate = `N${lf_rate}`
-                                from = parseInt(lf_from).toLocaleString()
-                                to = parseInt(lf_to).toLocaleString()
-
-                                $('#insurance-req').append(`
-                                    <small class="">N${from} to N${to} - ${rate}</small>
-                                    <br>
-                                `)
-                            })
                         }
 
 
                         // $('#loan-type-note').html(`Loan Qualification Period <span class="text-primary">${loanAgeQualification} month(s)</span>`)
                         // $('#loan-duration-note').html(`Maximum Repayment Period <span class="text-primary">${loanDuration} month(s)</span>`)
-                        // $('#loan-amount-note').html(`
-                        //   Minimum Credit Limit <span class="text-primary">${loanMinCreditLimit.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")} </span>
-                        //   ---
-                        //   Maximum Credit Limit <span class="text-primary">${loanMaxCreditLimit.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")} </span>
-                        //   ---
-                        //   Loan PSR <span class="text-primary">${loanPSRValue} % </span>
-                        // `)
+                        // ---
+                        //                          Maximum Credit Limit <span class="text-primary">${loanMaxCreditLimit.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")} </span>
+                        //                          ---
+                        //                          Loan PSR <span class="text-primary">${loanPSRValue} % </span>
+                        $('#loan-amount-note').html(`
+                          Minimum Credit Limit <span class="text-primary">${loanMinCreditLimit.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")} </span>
+                        `)
                         $('#get-started').attr('hidden', true)
                         $('#loan-details').attr('hidden', false)
                         if (monthsDifference > loanAgeQualification) {
@@ -225,40 +186,123 @@
         // })
 
         // perform these when user enters an amount
-        // $(document).on('keyup', '#loan-amount', function (e) {
-        //     e.preventDefault()
-        //     let selectedLoanAmount = $(this).val()
-        //     selectedLoanAmount = +(selectedLoanAmount.replace(/,/g, ''))
-        //     if (selectedLoanAmount) {
-        //         if (selectedLoanAmount >= loanMinCreditLimit && selectedLoanAmount <= loanMaxCreditLimit) {
-        //             $('#loan-amount-passed').attr('hidden', false)
-        //             $('#loan-amount-failed').attr('hidden', true)
-        //         } else {
-        //             $('#loan-amount-failed').attr('hidden', false)
-        //             $('#loan-amount-passed').attr('hidden', true)
-        //
-        //         }
-        //         if (parseInt(loanPSR) > 0) {
-        //             freeSavingsBalance = savingsAmount - encumbranceAmount
-        //             let loanPSRAmount = (parseInt(loanPSRValue) / 100) * selectedLoanAmount
-        //             if (loanPSRAmount <= freeSavingsBalance) {
-        //                 $('#loan-psr-passed').attr('hidden', false)
-        //                 $('#loan-psr-failed').attr('hidden', true)
-        //             } else {
-        //                 let allowedLoanAmount = freeSavingsBalance / (parseInt(loanPSRValue) / 100)
-        //                 waiverCharge = (selectedLoanAmount - allowedLoanAmount) * 0.10
-        //                 $('#loan-psr-passed').attr('hidden', true)
-        //                 $('#loan-psr-failed').attr('hidden', false)
-        //                 $('#loan-psr-failed').html(`<em class="icon ni ni-alert-circle"></em><span class="font-weight-bolder">Warning</span>. You do not have enough PSR for this loan. You will be charged a waiver charge of ${(waiverCharge).toLocaleString()}`)
-        //             }
-        //         }
-        //     } else {
-        //         $('#loan-amount-failed').attr('hidden', true)
-        //         $('#loan-amount-passed').attr('hidden', true)
-        //         $('#loan-psr-passed').attr('hidden', true)
-        //         $('#loan-psr-failed').attr('hidden', true)
-        //     }
-        // })
+        $(document).on('keyup', '#loan-amount', function (e) {
+            e.preventDefault()
+            let selectedLoanAmount = $(this).val()
+            selectedLoanAmount = +(selectedLoanAmount.replace(/,/g, ''))
+            if (selectedLoanAmount) {
+                if (selectedLoanAmount >= loanMinCreditLimit) {
+                    $('#loan-amount-passed').attr('hidden', false)
+                    $('#loan-amount-failed').attr('hidden', true)
+
+                    if (equity && equity.length) {
+                        const equityReq = equity.find(eq => {
+                            let to
+                            const {lf_from, lf_to, lf_rate, lf_rate_type} = eq
+                            to = parseInt(lf_to)
+                            return selectedLoanAmount <= to
+                        })
+
+                        if (equityReq) {
+                            let rate, from, to
+                            const {lf_from, lf_to, lf_rate, lf_rate_type} = equityReq
+                            if (lf_rate_type === '1') rate = `${lf_rate}%`
+                            else rate = `N${lf_rate}`
+                            from = parseInt(lf_from).toLocaleString()
+                            to = parseInt(lf_to).toLocaleString()
+                            $('#equity-details-list').html(`
+                            <li class="">N${from} to N${to} - ${rate} interest</li>
+                        `)
+                            $('#equity-details').attr('hidden', false)
+                        }
+
+                    } else {
+                        $('#equity-details').attr('hidden', true)
+                    }
+
+                    if (management && management.length) {
+                        const managementReq = management.find(eq => {
+                            let to
+                            const {lf_from, lf_to, lf_rate, lf_rate_type} = eq
+                            to = parseInt(lf_to)
+                            return selectedLoanAmount <= to
+                        })
+
+                        if (managementReq) {
+                            let rate, from, to
+                            const {lf_from, lf_to, lf_rate, lf_rate_type} = managementReq
+                            if (lf_rate_type === '1') rate = `${lf_rate}%`
+                            else rate = `N${lf_rate}`
+                            from = parseInt(lf_from).toLocaleString()
+                            to = parseInt(lf_to).toLocaleString()
+                            $('#management-details-list').html(`
+                            <li class="">N${from} to N${to} - ${rate} interest</li>
+                        `)
+                            $('#management-details').attr('hidden', false)
+                        }
+
+                    } else {
+                        $('#management-details').attr('hidden', true)
+                    }
+
+                    if (insurance && insurance.length) {
+                        const insuranceReq = insurance.find(eq => {
+                            let to
+                            const {lf_from, lf_to, lf_rate, lf_rate_type} = eq
+                            to = parseInt(lf_to)
+                            return selectedLoanAmount <= to
+                        })
+
+                        if (insuranceReq) {
+                            let rate, from, to
+                            const {lf_from, lf_to, lf_rate, lf_rate_type} = insuranceReq
+                            if (lf_rate_type === '1') rate = `${lf_rate}%`
+                            else rate = `N${lf_rate}`
+                            from = parseInt(lf_from).toLocaleString()
+                            to = parseInt(lf_to).toLocaleString()
+                            $('#insurance-details-list').html(`
+                            <li class="">N${from} to N${to} - ${rate} interest</li>
+                        `)
+                            $('#insurance-details').attr('hidden', false)
+                        }
+
+                    } else {
+                        $('#insurance-details').attr('hidden', true)
+                    }
+
+                } else {
+                    $('#loan-amount-failed').attr('hidden', false)
+                    $('#loan-amount-passed').attr('hidden', true)
+                    $('#equity-details').attr('hidden', true)
+                    $('#management-details').attr('hidden', true)
+                    $('#insurance-details').attr('hidden', true)
+                }
+
+
+                // if (parseInt(loanPSR) > 0) {
+                //     freeSavingsBalance = savingsAmount - encumbranceAmount
+                //     let loanPSRAmount = (parseInt(loanPSRValue) / 100) * selectedLoanAmount
+                //     if (loanPSRAmount <= freeSavingsBalance) {
+                //         $('#loan-psr-passed').attr('hidden', false)
+                //         $('#loan-psr-failed').attr('hidden', true)
+                //     } else {
+                //         let allowedLoanAmount = freeSavingsBalance / (parseInt(loanPSRValue) / 100)
+                //         waiverCharge = (selectedLoanAmount - allowedLoanAmount) * 0.10
+                //         $('#loan-psr-passed').attr('hidden', true)
+                //         $('#loan-psr-failed').attr('hidden', false)
+                //         $('#loan-psr-failed').html(`<em class="icon ni ni-alert-circle"></em><span class="font-weight-bolder">Warning</span>. You do not have enough PSR for this loan. You will be charged a waiver charge of ${(waiverCharge).toLocaleString()}`)
+                //     }
+                // }
+            } else {
+                $('#loan-amount-failed').attr('hidden', true)
+                $('#loan-amount-passed').attr('hidden', true)
+                $('#loan-psr-passed').attr('hidden', true)
+                $('#loan-psr-failed').attr('hidden', true)
+                $('#equity-details').attr('hidden', true)
+                $('#management-details').attr('hidden', true)
+                $('#insurance-details').attr('hidden', true)
+            }
+        })
 
         $(document).on('blur', '#guarantor-1', function (e) {
             e.preventDefault()

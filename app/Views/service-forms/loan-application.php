@@ -195,6 +195,27 @@ $session = session();
                                                     your selected loan
                                                     <ul class="list list-sm list-checked" id="loan-details-list"></ul>
                                                 </div>
+                                                <!--requirements-->
+                                                <div class="alert alert-icon alert-secondary mt-1 mb-1" role="alert"
+                                                     id="equity-details" hidden>
+                                                    <em class="icon ni ni-alert-circle"></em>
+                                                    Equity fee requirement
+                                                    <ul class="list list-sm list-checked" id="equity-details-list"></ul>
+                                                </div>
+                                                <div class="alert alert-icon alert-secondary mt-1 mb-1" role="alert"
+                                                     id="management-details" hidden>
+                                                    <em class="icon ni ni-alert-circle"></em>
+                                                    Management fee requirement
+                                                    <ul class="list list-sm list-checked"
+                                                        id="management-details-list"></ul>
+                                                </div>
+                                                <div class="alert alert-icon alert-secondary mt-1 mb-1" role="alert"
+                                                     id="insurance-details" hidden>
+                                                    <em class="icon ni ni-alert-circle"></em>
+                                                    Insurance fee requirement
+                                                    <ul class="list list-sm list-checked"
+                                                        id="insurance-details-list"></ul>
+                                                </div>
                                                 <!--qualification age-->
                                                 <div class="alert alert-icon alert-success mt-1 mb-1" role="alert"
                                                      id="qualification-age-passed"
@@ -238,6 +259,7 @@ $session = session();
                                                             class="font-weight-bolder">We're Sorry</span>.
                                                     Your loan amount does not fall within the credit limit range.
                                                 </div>
+
                                                 <!--psr amount-->
                                                 <div class="alert alert-icon alert-success mt-1 mb-1" role="alert"
                                                      id="loan-psr-passed" hidden>
@@ -246,7 +268,6 @@ $session = session();
                                                 </div>
                                                 <div class="alert alert-icon alert-warning mt-1 mb-1" role="alert"
                                                      id="loan-psr-failed" hidden>
-
                                                 </div>
                                             </div>
                                         </div>
