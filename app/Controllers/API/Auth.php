@@ -58,7 +58,8 @@ class Auth extends ResourceController
 
             $response = [
                 'success' => true,
-                'message' => 'OTP sent to cooperator email'
+                'message' => 'OTP sent to cooperator email',
+                'cooperator' => $cooperator
             ];
             return $this->respond($response);
         } catch (\Exception $exception) {
