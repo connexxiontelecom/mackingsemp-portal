@@ -134,7 +134,7 @@ class Auth extends ResourceController
         }
     }
 
-    public function post_login()
+    public function post_login(): Response
     {
         try {
             $cooperatorModel = new CooperatorModel();

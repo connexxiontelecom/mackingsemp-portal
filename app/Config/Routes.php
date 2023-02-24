@@ -89,6 +89,10 @@ $routes->post('api/auth/login', 'API\Auth::post_login');
 
 $routes->get('api/account', 'API\Account::get_all_account_details', ['filter' => 'authFilter']);
 
+$routes->get('api/loan/(:any)', 'API\Loan::get_loan/$1', ['filter' => 'authFilter']);
+$routes->get('api/loan/outstanding', 'API\Loan::get_outstanding_loans', ['filter' => 'authFilter']);
+
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing
