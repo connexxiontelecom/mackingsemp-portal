@@ -9,7 +9,9 @@
     "codeigniter4/framework": "^4.0",
     "ext-mbstring": "*",
     "aws/aws-sdk-php": "^3.257",
-    "firebase/php-jwt": "^6.4"
+    "firebase/php-jwt": "^6.4",
+    "ext-http": "*",
+    "ext-json": "*"
   },
   "require-dev": {
     "fakerphp/faker": "^1.9",

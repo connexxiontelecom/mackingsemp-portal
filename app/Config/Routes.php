@@ -87,6 +87,8 @@ $routes->post('api/auth/register', 'API\Auth::post_register');
 $routes->patch('api/auth/register', 'API\Auth::patch_register');
 $routes->post('api/auth/login', 'API\Auth::post_login');
 
+$routes->get('api/account', 'API\Account::get_all_account_details', ['filter' => 'authFilter']);
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing
