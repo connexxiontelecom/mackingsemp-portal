@@ -65,6 +65,11 @@ class Loan extends ResourceController
                     $total_interest = 0;
                     $cooperator_loan_details = $this->loanModel->get_cooperator_loans_by_staff_id_loan_id($staff_id,
                       $cooperator_loan['loan_id']);
+//                    if (empty($cooperator_loan_details)) {
+//                        $cooperator_loan_details = $this->loanModel->get_cooperator_loans_no_repayment_by_staff_id_loan_id($staff_id,
+//                          $cooperator_loan['loan_id']);
+//                    }
+
                     if (!empty($cooperator_loan_details)) {
                         foreach ($cooperator_loan_details as $cooperator_loan_detail) {
                             $cooperator_loan_detail->lr_dctype == 1 ? $total_cr += $cooperator_loan_detail->lr_amount : $total_cr += 0;
