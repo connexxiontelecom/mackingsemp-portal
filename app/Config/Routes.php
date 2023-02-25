@@ -91,7 +91,8 @@ $routes->get('api/account', 'API\Account::get_all_account_details', ['filter' =>
 
 $routes->get('api/loan/(:num)', 'API\Loan::get_loan/$1', ['filter' => 'authFilter']);
 $routes->post('api/loan', 'API\Loan::post_new_loan_application', ['filter' => 'authFilter']);
-$routes->get('api/loan/setups', 'API\Loan::get_loan_setups', ['filter' => 'authFilter']);
+$routes->get('api/loan/setup', 'API\Loan::get_loan_setups', ['filter' => 'authFilter']);
+$routes->get('api/loan/setup/(:num)', 'API\Loan::get_loan_setup/$1', ['filter' => 'authFilter']);
 $routes->get('api/loan/outstanding', 'API\Loan::get_outstanding_loans', ['filter' => 'authFilter']);
 
 

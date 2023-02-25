@@ -3,6 +3,9 @@
 namespace App\Controllers\API;
 
 use App\Libraries\authLib;
+use App\Models\GroupModel;
+use App\Models\LoanFeesSetup;
+use App\Models\LoanInterestDuration;
 use App\Models\LoanModel;
 use App\Models\LoanSetupModel;
 use CodeIgniter\API\ResponseTrait;
@@ -16,6 +19,9 @@ class Loan extends ResourceController
     private authLib $authLib;
     private LoanModel $loanModel;
     private LoanSetupModel $loanSetupModel;
+    private GroupModel $groupModel;
+    private LoanInterestDuration $loanInterestDuration;
+    private LoanFeesSetup $loanFeesSetup;
 
 
     public function __construct()
@@ -23,6 +29,9 @@ class Loan extends ResourceController
         $this->authLib = new authLib();
         $this->loanModel = new LoanModel();
         $this->loanSetupModel = new LoanSetupModel();
+        $this->groupModel = new GroupModel();
+        $this->loanInterestDuration = new LoanInterestDuration();
+        $this->loanFeesSetup = new LoanFeesSetup();
     }
 
     public function get_loan($loan_id): Response
@@ -100,6 +109,37 @@ class Loan extends ResourceController
             $response = [
               'success' => true,
               'loan_setups' => $loan_setups
+            ];
+            return $this->respond($response);
+        } catch (\Exception $exception) {
+            return $this->fail($exception->getMessage());
+        }
+    }
+
+    public function get_loan_setup($loan_setup_id)
+    {
+        try {
+            $user = $this->authLib->get_auth_user();
+            $loan_setup_details = $this->loanSetupModel->find($loan_setup_id);
+            if ($loan_setup_details) {
+                $loan_setup_details['cooperator_group'] = $this->groupModel->where('gs_id',
+                  $user['cooperator_group_id'])->first();
+                $loan_setup_details['int_duration'] = $this->loanInterestDuration->where('lid_loan_type_id',
+                  $loan_setup_id)->findAll();
+                if ($loan_setup_details['insurance_fee']) {
+                    $loan_setup_details['insurance'] = $this->loanFeesSetup->where('lf_type', 3)->findAll();
+                }
+                if ($loan_setup_details['mgt_fee']) {
+                    $loan_setup_details['management'] = $this->loanFeesSetup->where('lf_type', 2)->findAll();
+                }
+                if ($loan_setup_details['equity_fee']) {
+                    $loan_setup_details['equity'] = $this->loanFeesSetup->where('lf_type', 1)->findAll();
+                }
+            }
+            
+            $response = [
+              'success' => true,
+              'loan_setup_details' => $loan_setup_details
             ];
             return $this->respond($response);
         } catch (\Exception $exception) {
