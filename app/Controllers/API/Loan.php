@@ -4,6 +4,7 @@ namespace App\Controllers\API;
 
 use App\Libraries\authLib;
 use App\Models\LoanModel;
+use App\Models\LoanSetupModel;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\HTTP\Response;
 use CodeIgniter\RESTful\ResourceController;
@@ -14,32 +15,22 @@ class Loan extends ResourceController
 
     private authLib $authLib;
     private LoanModel $loanModel;
+    private LoanSetupModel $loanSetupModel;
 
 
     public function __construct()
     {
         $this->authLib = new authLib();
         $this->loanModel = new LoanModel();
+        $this->loanSetupModel = new LoanSetupModel();
     }
 
-    public function get_loan($loan_id)
+    public function get_loan($loan_id): Response
     {
         try {
             $user = $this->authLib->get_auth_user();
             $staff_id = $user['cooperator_staff_id'];
-            $loan_details = array();
             $cooperator_loan_details = $this->loanModel->get_cooperator_loans_by_staff_id_loan_id($staff_id, $loan_id);
-//            if (empty($cooperator_loan_details)) {
-//                // If the query returns empty then the loan has been disbursed but no activity has taken place
-//                // (i.e no interest or repayment has been made).
-//                // So we query for loan details but skip repayment details.
-//                $loan_details['loan_details'] = $this->loanModel->get_cooperator_loans_no_repayment_by_staff_id_loan_id($staff_id,
-//                  $loan_id);
-//                $loan_details['no_activity'] = true;
-//            } else {
-//                $loan_details['loan_details'] = $cooperator_loan_details;
-//                $loan_details['no_activity'] = false;
-//            }
             $response = [
               'success' => true,
               'loan_details' => $cooperator_loan_details
@@ -99,5 +90,28 @@ class Loan extends ResourceController
         } catch (\Exception $exception) {
             return $this->fail($exception->getMessage());
         }
+    }
+
+    public function get_loan_setups(): Response
+    {
+        try {
+            $this->authLib->get_auth_user();
+            $loan_setups = $this->loanSetupModel->where('status', 1)->findAll();
+            $response = [
+              'success' => true,
+              'loan_setups' => $loan_setups
+            ];
+            return $this->respond($response);
+        } catch (\Exception $exception) {
+            return $this->fail($exception->getMessage());
+        }
+    }
+
+    public function get_loan_setup_details($loan_setup_id)
+    {
+    }
+
+    public function post_new_loan_application()
+    {
     }
 }
