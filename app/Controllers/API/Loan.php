@@ -3,6 +3,7 @@
 namespace App\Controllers\API;
 
 use App\Libraries\authLib;
+use App\Models\ExternalGuarantorModel;
 use App\Models\GroupModel;
 use App\Models\LoanFeesSetup;
 use App\Models\LoanInterestDuration;
@@ -22,6 +23,7 @@ class Loan extends ResourceController
     private GroupModel $groupModel;
     private LoanInterestDuration $loanInterestDuration;
     private LoanFeesSetup $loanFeesSetup;
+    private ExternalGuarantorModel $externalGuarantorModel;
 
 
     public function __construct()
@@ -32,6 +34,7 @@ class Loan extends ResourceController
         $this->groupModel = new GroupModel();
         $this->loanInterestDuration = new LoanInterestDuration();
         $this->loanFeesSetup = new LoanFeesSetup();
+        $this->externalGuarantorModel = new ExternalGuarantorModel();
     }
 
     public function get_loan($loan_id): Response
@@ -116,7 +119,7 @@ class Loan extends ResourceController
         }
     }
 
-    public function get_loan_setup($loan_setup_id)
+    public function get_loan_setup($loan_setup_id): Response
     {
         try {
             $user = $this->authLib->get_auth_user();
@@ -136,7 +139,7 @@ class Loan extends ResourceController
                     $loan_setup_details['equity'] = $this->loanFeesSetup->where('lf_type', 1)->findAll();
                 }
             }
-            
+
             $response = [
               'success' => true,
               'loan_setup_details' => $loan_setup_details
@@ -147,8 +150,23 @@ class Loan extends ResourceController
         }
     }
 
-    public function get_loan_setup_details($loan_setup_id)
+    public function search_loan_external_guarantor(): Response
     {
+        try {
+            $this->authLib->get_auth_user();
+            $value = $this->request->getGet('value');
+            if (!$value) {
+                return $this->failValidationErrors('Search value is required');
+            }
+            $guarantors = $this->externalGuarantorModel->search_guarantors($value);
+            $response = [
+              'success' => true,
+              'data' => $guarantors
+            ];
+            return $this->respond($response);
+        } catch (\Exception $exception) {
+            return $this->fail($exception->getMessage());
+        }
     }
 
     public function post_new_loan_application()
