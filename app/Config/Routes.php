@@ -95,6 +95,7 @@ $routes->get('api/loan/setup', 'API\Loan::get_loan_setups', ['filter' => 'authFi
 $routes->get('api/loan/setup/(:num)', 'API\Loan::get_loan_setup/$1', ['filter' => 'authFilter']);
 $routes->get('api/loan/outstanding', 'API\Loan::get_outstanding_loans', ['filter' => 'authFilter']);
 $routes->get('api/loan/guarantor/external', 'API\Loan::search_loan_external_guarantor', ['filter' => 'authFilter']);
+$routes->get('api/loan/guarantor/internal', 'API\Loan::search_loan_internal_guarantor', ['filter' => 'authFilter']);
 
 
 /*
