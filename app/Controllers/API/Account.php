@@ -40,6 +40,17 @@ class Account extends ResourceController
                   $savings_type)->first();
                 $payment_details = $this->paymentDetailModel->get_all_payment_details_by_id($staff_id, $savings_type);
                 $savings_accounts[$key]['savings_type']['payment_details'] = $payment_details;
+                $total_dr = 0;
+                $total_cr = 0;
+                foreach ($payment_details as $savings_payment_amount) {
+                    if ($savings_payment_amount->pd_drcrtype == 1) {
+                        $total_cr += $savings_payment_amount->pd_amount;
+                    }
+                    if ($savings_payment_amount->pd_drcrtype == 2) {
+                        $total_dr += $savings_payment_amount->pd_amount;
+                    }
+                }
+                $savings_accounts[$key]['savings_type']['payment_balance'] = $total_cr - $total_dr;
             }
 
             $response = [
