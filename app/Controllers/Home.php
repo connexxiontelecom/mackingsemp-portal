@@ -21,7 +21,7 @@ class Home extends BaseController
             $page_data['savings_types_amounts_list'] = $this->_get_savings_types_amounts($staff_id);
             $page_data['outstanding_loans'] = $this->_get_user_loans(0);
             $page_data['cooperator'] = $this->cooperatorModel->where('cooperator_staff_id', $staff_id)->first();
-            $page_data['contribution_types'] = $this->contributionTypeModel->findAll();
+            $page_data['contribution_types'] = $this->contributionTypeModel->where('loans', 0)->findAll();
             return view('index', $page_data);
         }
         return redirect('auth/login');

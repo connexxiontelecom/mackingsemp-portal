@@ -3,18 +3,21 @@
 //print_r($cooperator)
 $dob = '';
 if ($cooperator['cooperator_dob']) {
-  $dob = date_create($cooperator['cooperator_dob']);
+    $dob = date_create($cooperator['cooperator_dob']);
 }
 ?>
 <!DOCTYPE html>
 <html lang="en" class="js">
-<?php include(APPPATH . '/Views/_head.php'); ?>
+<?php
+include(APPPATH . '/Views/_head.php'); ?>
 <body class="nk-body npc-crypto bg-white has-sidebar">
 <div class="nk-app-root">
   <div class="nk-main">
-    <?php include(APPPATH . '/Views/_sidebar.php'); ?>
+      <?php
+      include(APPPATH . '/Views/_sidebar.php'); ?>
     <div class="nk-wrap">
-      <?php include(APPPATH . '/Views/_header.php'); ?>
+        <?php
+        include(APPPATH . '/Views/_header.php'); ?>
       <div class="nk-content nk-content-fluid">
         <div class="container-xl wide-lg">
           <div class="nk-content-body">
@@ -40,7 +43,7 @@ if ($cooperator['cooperator_dob']) {
                   <div class="nk-block-head-content">
                     <h5 class="nk-block-title">Personal Information</h5>
                     <div class="nk-block-des">
-                      <p>Basic and official information that you use on SLB Staff Coop.</p>
+                      <p>Basic and official information that you use on Mackings Empowerment Initiative.</p>
                     </div>
                   </div>
                 </div><!-- .nk-block-head -->
@@ -48,20 +51,25 @@ if ($cooperator['cooperator_dob']) {
                   <div class="card-inner-group">
                     <div class="card-inner">
                       <div class="between-center flex-wrap flex-md-nowrap g-3">
-                        <?php if (!$cooperator['cooperator_passport']): ?>
-                          <div class="nk-block-text">
-                            <div class="user-avatar rounded md">
+                          <?php
+                          if (!$cooperator['cooperator_passport']): ?>
+                            <div class="nk-block-text">
+                              <div class="user-avatar rounded md">
                             <span>
-                              <?= mb_substr($session->get('firstname'), 0, 1) . ' ' . mb_substr($session->get('lastname'), 0, 1) ?>
+                              <?= mb_substr($session->get('firstname'), 0,
+                                1) . ' ' . mb_substr($session->get('lastname'), 0, 1) ?>
                             </span>
+                              </div>
                             </div>
-                          </div>
-                        <?php else: ?>
-                          <div class="nk-block-text">
-                            <img src="/uploads/passports/<?= $cooperator['cooperator_passport'] ?>" style="width: 4.5em"
-                                 alt="display picture" class="img-fluid rounded">
-                          </div>
-                        <?php endif; ?>
+                          <?php
+                          else: ?>
+                            <div class="nk-block-text">
+                              <img src="/uploads/passports/<?= $cooperator['cooperator_passport'] ?>"
+                                   style="width: 4.5em"
+                                   alt="display picture" class="img-fluid rounded">
+                            </div>
+                          <?php
+                          endif; ?>
                         <div class="nk-block-actions flex-shrink-sm-0">
                           <ul class="align-center flex-wrap flex-sm-nowrap gx-3 gy-2">
                             <li class="ml-4 order-md-last">
@@ -104,12 +112,15 @@ if ($cooperator['cooperator_dob']) {
                   <div class="data-item">
                     <div class="data-col">
                       <span class="data-label">Date of Birth</span>
-                      <?php if ($dob): ?>
-                        <span
-                          class="data-value"><?= date_format($dob, "d F, Y") ?></span>
-                      <?php else: ?>
-                        <span class="data-value">-</span>
-                      <?php endif ?>
+                        <?php
+                        if ($dob): ?>
+                          <span
+                            class="data-value"><?= date_format($dob, "d F, Y") ?></span>
+                        <?php
+                        else: ?>
+                          <span class="data-value">-</span>
+                        <?php
+                        endif ?>
                     </div>
                     <div></div>
                   </div><!-- .data-item -->
@@ -117,6 +128,13 @@ if ($cooperator['cooperator_dob']) {
                     <div class="data-col">
                       <span class="data-label">Email</span>
                       <span class="data-value"><?= $cooperator['cooperator_email'] ?></span>
+                    </div>
+                    <div></div>
+                  </div><!-- .data-item -->
+                  <div class="data-item">
+                    <div class="data-col">
+                      <span class="data-label">Phone</span>
+                      <span class="data-value"><?= $cooperator['cooperator_telephone'] ?></span>
                     </div>
                     <div></div>
                   </div><!-- .data-item -->
@@ -137,11 +155,14 @@ if ($cooperator['cooperator_dob']) {
                   <div class="data-item">
                     <div class="data-col">
                       <span class="data-label">State</span>
-                      <?php if ($cooperator['state']): ?>
-                        <span class="data-value"><?= $cooperator['state']['state_name'] ?></span>
-                      <?php else: ?>
-                        <span class="data-value">-</span>
-                      <?php endif ?>
+                        <?php
+                        if ($cooperator['state']): ?>
+                          <span class="data-value"><?= $cooperator['state']['state_name'] ?></span>
+                        <?php
+                        else: ?>
+                          <span class="data-value">-</span>
+                        <?php
+                        endif ?>
                     </div>
                     <div></div>
                   </div><!-- .data-item -->
@@ -153,33 +174,42 @@ if ($cooperator['cooperator_dob']) {
                   <div class="data-item">
                     <div class="data-col">
                       <span class="data-label">Department</span>
-                      <?php if ($cooperator['department']): ?>
-                        <span class="data-value"><?= $cooperator['department']['department_name'] ?></span>
-                      <?php else: ?>
-                        <span class="data-value">-</span>
-                      <?php endif ?>
+                        <?php
+                        if ($cooperator['department']): ?>
+                          <span class="data-value"><?= $cooperator['department']['department_name'] ?></span>
+                        <?php
+                        else: ?>
+                          <span class="data-value">-</span>
+                        <?php
+                        endif ?>
                     </div>
                     <div></div>
                   </div><!-- .data-item -->
                   <div class="data-item">
                     <div class="data-col">
                       <span class="data-label">Location</span>
-                      <?php if ($cooperator['location']): ?>
-                        <span class="data-value"><?= $cooperator['location']['location_name'] ?></span>
-                      <?php else: ?>
-                        <span class="data-value">-</span>
-                      <?php endif ?>
+                        <?php
+                        if ($cooperator['location']): ?>
+                          <span class="data-value"><?= $cooperator['location']['location_name'] ?></span>
+                        <?php
+                        else: ?>
+                          <span class="data-value">-</span>
+                        <?php
+                        endif ?>
                     </div>
                     <div></div>
                   </div><!-- .data-item -->
                   <div class="data-item">
                     <div class="data-col">
                       <span class="data-label">Payroll Group</span>
-                      <?php if ($cooperator['payroll_group']): ?>
-                        <span class="data-value"><?= $cooperator['payroll_group']['pg_name'] ?></span>
-                      <?php else: ?>
-                        <span class="data-value">-</span>
-                      <?php endif ?>
+                        <?php
+                        if ($cooperator['payroll_group']): ?>
+                          <span class="data-value"><?= $cooperator['payroll_group']['pg_name'] ?></span>
+                        <?php
+                        else: ?>
+                          <span class="data-value">-</span>
+                        <?php
+                        endif ?>
                     </div>
                     <div></div>
                   </div><!-- .data-item -->
@@ -198,11 +228,14 @@ if ($cooperator['cooperator_dob']) {
                   <div class="data-item">
                     <div class="data-col">
                       <span class="data-label">Bank</span>
-                      <?php if ($cooperator['bank']): ?>
-                        <span class="data-value"><?= $cooperator['bank']['bank_name'] ?></span>
-                      <?php else: ?>
-                        <span class="data-value">-</span>
-                      <?php endif ?>
+                        <?php
+                        if ($cooperator['bank']): ?>
+                          <span class="data-value"><?= $cooperator['bank']['bank_name'] ?></span>
+                        <?php
+                        else: ?>
+                          <span class="data-value">-</span>
+                        <?php
+                        endif ?>
                     </div>
                     <div></div>
                   </div><!-- .data-item -->
@@ -274,7 +307,8 @@ if ($cooperator['cooperator_dob']) {
           </div>
         </div>
       </div>
-      <?php include(APPPATH . '/Views/_footer.php'); ?>
+        <?php
+        include(APPPATH . '/Views/_footer.php'); ?>
     </div>
   </div>
 </div>
@@ -286,189 +320,231 @@ if ($cooperator['cooperator_dob']) {
         <h5 class="title">Update Profile</h5>
         <ul class="nk-nav nav nav-tabs">
           <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#picture">Display Picture</a>
+            <a class="nav-link active" data-toggle="tab" href="#basic">Basic Details</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#bank">Bank</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#nok">Next of Kin</a>
-          </li>
+          <!--          <li class="nav-item">-->
+          <!--            <a class="nav-link active" data-toggle="tab" href="#picture">Display Picture</a>-->
+          <!--          </li>-->
+          <!--          <li class="nav-item">-->
+          <!--            <a class="nav-link" data-toggle="tab" href="#bank">Bank</a>-->
+          <!--          </li>-->
+          <!--          <li class="nav-item">-->
+          <!--            <a class="nav-link" data-toggle="tab" href="#nok">Next of Kin</a>-->
+          <!--          </li>-->
         </ul><!-- .nav-tabs -->
         <div class="tab-content">
-          <div class="tab-pane active" id="picture">
-            <form enctype="multipart/form-data" class="form-validate" id="display-picture">
+          <div class="tab-pane active" id="basic">
+            <form id="update-basic-details" class="form-validate">
               <div class="row gy-4">
                 <div class="col-12">
                   <div class="form-group">
-                    <label class="form-label font-weight-bolder">Display Picture <span
-                        class="text-danger"> *</span></label>
-                    <div class="form-control-wrap">
-                      <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="dp" name="dp" accept="image/*" required>
-                        <label class="custom-file-label" for="dp">Choose file</label>
-                      </div>
+                    <label class="form-label font-weight-bolder">
+                      Email Address<span class="text-danger"> *</span>
+                    </label>
+                    <div class="form-control-group">
+                      <input type="text" class="form-control" name="cooperator_email" id="email"
+                             value="<?= $cooperator['cooperator_email'] ?>" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="form-group">
+                    <label class="form-label font-weight-bolder">
+                      Phone Number<span class="text-danger"> *</span>
+                    </label>
+                    <div class="form-control-group">
+                      <input type="text" class="form-control" name="cooperator_telephone" id="phone"
+                             value="<?= $cooperator['cooperator_telephone'] ?>" required>
                     </div>
                   </div>
                 </div>
                 <div class="col-12">
                   <div class="form-group mt-3">
-                    <button class="btn btn-primary">Upload Picture</button>
+                    <button class="btn btn-primary">Update Basic Details</button>
                   </div>
                 </div>
-              </div>
-            </form><!-- .tab-pane -->
-
-          </div><!-- .tab-pane -->
-          <div class="tab-pane" id="bank">
-            <form class="row gy-4 form-validate" id="update-bank-form">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-label" for="application_bank_id">Bank <span class="text-danger">*</span></label>
-                  <div class="form-control-group">
-                    <select class="form-control form-select" data-search="on" name="application_bank_id"
-                            id="application_bank_id" required>
-                      <?php foreach ($banks as $bank): ?>
-                        <option
-                          value="<?= $bank['bank_id']; ?>"><?= $bank['bank_name']; ?></option>
-                      <?php endforeach; ?>
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-label" for="application_account_number">Account Number <span
-                      class="text-danger">*</span></label>
-                  <div class="form-control-group">
-                    <input type="text" class="form-control" name="application_account_number"
-                           id="application_account_number" required>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-label" for="application_bank_branch">Bank Branch <span
-                      class="text-danger">*</span></label>
-                  <div class="form-control-group">
-                    <input type="text" class="form-control" name="application_bank_branch"
-                           id="application_bank_branch" required>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-label" for="application_sort_code">Sort Code <span
-                      class="text-danger">*</span></label>
-                  <div class="form-control-group">
-                    <input type="text" class="form-control" name="application_sort_code"
-                           id="application_sort_code" required>
-                  </div>
-                </div>
-              </div>
-              <div class="col-12">
-                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
-                  <li>
-                    <button class="btn btn-primary">Update Bank</button>
-                  </li>
-                  <li>
-                    <a href="#" data-dismiss="modal" class="link link-light">Cancel</a>
-                  </li>
-                </ul>
               </div>
             </form>
-          </div><!-- .tab-pane -->
-          <div class="tab-pane" id="nok">
-            <form class="row gy-4 form-validate" id="update-nok">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-label" for="cooperator_kin_fullname">Full Name <span
-                      class="text-danger">*</span></label>
-                  <div class="form-control-group">
-                    <input type="text" class="form-control" name="cooperator_kin_fullname"
-                           id="cooperator_kin_fullname" required>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-label" for="cooperator_kin_relationship">Relationship <span
-                      class="text-danger">*</span></label>
-                  <div class="form-control-group">
-                    <select class="form-control form-select" data-search="on"
-                            name="cooperator_kin_relationship"
-                            id="cooperator_kin_relationship" required>
-                      <option
-                        value="sibling">Sibling
-                      </option>
-                      <option
-                        value="spouse">Spouse
-                      </option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-label" for="cooperator_kin_email">Email Address <span class="text-danger">*</span></label>
-                  <div class="form-control-group">
-                    <input type="email" class="form-control" name="cooperator_kin_email"
-                           id="cooperator_kin_email" required
-                    >
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-label" for="cooperator_kin_phone">Phone Number <span
-                      class="text-danger">*</span></label>
-                  <div class="form-control-group">
-                    <input type="text" class="form-control" name="cooperator_kin_phone"
-                           id="cooperator_kin_phone" required
-                    >
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-label" for="cooperator_kin_percentage">Percentage <span
-                      class="text-danger">*</span></label>
-                  <div class="form-control-group">
-                    <input type="number" class="form-control" name="cooperator_kin_percentage"
-                           id="cooperator_kin_percentage" required
-                    >
-                  </div>
-                </div>
-              </div>
-              <div class="col-12">
-                <div class="form-group">
-                  <label class="form-label" for="cooperator_kin_address">Address <span
-                      class="text-danger">*</span></label>
-                  <div class="form-control-group">
-                            <textarea class="form-control no-resize" name="cooperator_kin_address"
-                                      id="cooperator_kin_address" rows="1" required
-                            ></textarea>
-                  </div>
-                </div>
-              </div>
-              <div class="col-12">
-                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
-                  <li>
-                    <button class="btn btn-primary">Update Next of Kin</button>
-                  </li>
-                  <li>
-                    <a href="#" data-dismiss="modal" class="link link-light">Cancel</a>
-                  </li>
-                </ul>
-              </div>
-            </form>
-          </div><!-- .tab-pane -->
+          </div>
+          <!--          <div class="tab-pane active" id="picture">-->
+          <!--            <form enctype="multipart/form-data" class="form-validate" id="display-picture">-->
+          <!--              <div class="row gy-4">-->
+          <!--                <div class="col-12">-->
+          <!--                  <div class="form-group">-->
+          <!--                    <label class="form-label font-weight-bolder">Display Picture <span-->
+          <!--                        class="text-danger"> *</span></label>-->
+          <!--                    <div class="form-control-wrap">-->
+          <!--                      <div class="custom-file">-->
+          <!--                        <input type="file" class="custom-file-input" id="dp" name="dp" accept="image/*" required>-->
+          <!--                        <label class="custom-file-label" for="dp">Choose file</label>-->
+          <!--                      </div>-->
+          <!--                    </div>-->
+          <!--                  </div>-->
+          <!--                </div>-->
+          <!--                <div class="col-12">-->
+          <!--                  <div class="form-group mt-3">-->
+          <!--                    <button class="btn btn-primary">Upload Picture</button>-->
+          <!--                  </div>-->
+          <!--                </div>-->
+          <!--              </div>-->
+          <!--            </form>-->
+          <!---->
+          <!--          </div>-->
+          <!--          <div class="tab-pane" id="bank">-->
+          <!--            <form class="row gy-4 form-validate" id="update-bank-form">-->
+          <!--              <div class="col-md-6">-->
+          <!--                <div class="form-group">-->
+          <!--                  <label class="form-label" for="application_bank_id">Bank <span class="text-danger">*</span></label>-->
+          <!--                  <div class="form-control-group">-->
+          <!--                    <select class="form-control form-select" data-search="on" name="application_bank_id"-->
+          <!--                            id="application_bank_id" required>-->
+          <!--                        --><?php
+            //                        foreach ($banks as $bank): ?>
+          <!--                          <option-->
+          <!--                            value="--><?php
+            //= $bank['bank_id']; ?><!--">--><?php
+            //= $bank['bank_name']; ?><!--</option>-->
+          <!--                        --><?php
+            //                        endforeach; ?>
+          <!--                    </select>-->
+          <!--                  </div>-->
+          <!--                </div>-->
+          <!--              </div>-->
+          <!--              <div class="col-md-6">-->
+          <!--                <div class="form-group">-->
+          <!--                  <label class="form-label" for="application_account_number">Account Number <span-->
+          <!--                      class="text-danger">*</span></label>-->
+          <!--                  <div class="form-control-group">-->
+          <!--                    <input type="text" class="form-control" name="application_account_number"-->
+          <!--                           id="application_account_number" required>-->
+          <!--                  </div>-->
+          <!--                </div>-->
+          <!--              </div>-->
+          <!--              <div class="col-md-6">-->
+          <!--                <div class="form-group">-->
+          <!--                  <label class="form-label" for="application_bank_branch">Bank Branch <span-->
+          <!--                      class="text-danger">*</span></label>-->
+          <!--                  <div class="form-control-group">-->
+          <!--                    <input type="text" class="form-control" name="application_bank_branch"-->
+          <!--                           id="application_bank_branch" required>-->
+          <!--                  </div>-->
+          <!--                </div>-->
+          <!--              </div>-->
+          <!--              <div class="col-md-6">-->
+          <!--                <div class="form-group">-->
+          <!--                  <label class="form-label" for="application_sort_code">Sort Code <span-->
+          <!--                      class="text-danger">*</span></label>-->
+          <!--                  <div class="form-control-group">-->
+          <!--                    <input type="text" class="form-control" name="application_sort_code"-->
+          <!--                           id="application_sort_code" required>-->
+          <!--                  </div>-->
+          <!--                </div>-->
+          <!--              </div>-->
+          <!--              <div class="col-12">-->
+          <!--                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">-->
+          <!--                  <li>-->
+          <!--                    <button class="btn btn-primary">Update Bank</button>-->
+          <!--                  </li>-->
+          <!--                  <li>-->
+          <!--                    <a href="#" data-dismiss="modal" class="link link-light">Cancel</a>-->
+          <!--                  </li>-->
+          <!--                </ul>-->
+          <!--              </div>-->
+          <!--            </form>-->
+          <!--          </div>-->
+          <!--          <div class="tab-pane" id="nok">-->
+          <!--            <form class="row gy-4 form-validate" id="update-nok">-->
+          <!--              <div class="col-md-6">-->
+          <!--                <div class="form-group">-->
+          <!--                  <label class="form-label" for="cooperator_kin_fullname">Full Name <span-->
+          <!--                      class="text-danger">*</span></label>-->
+          <!--                  <div class="form-control-group">-->
+          <!--                    <input type="text" class="form-control" name="cooperator_kin_fullname"-->
+          <!--                           id="cooperator_kin_fullname" required>-->
+          <!--                  </div>-->
+          <!--                </div>-->
+          <!--              </div>-->
+          <!--              <div class="col-md-6">-->
+          <!--                <div class="form-group">-->
+          <!--                  <label class="form-label" for="cooperator_kin_relationship">Relationship <span-->
+          <!--                      class="text-danger">*</span></label>-->
+          <!--                  <div class="form-control-group">-->
+          <!--                    <select class="form-control form-select" data-search="on"-->
+          <!--                            name="cooperator_kin_relationship"-->
+          <!--                            id="cooperator_kin_relationship" required>-->
+          <!--                      <option-->
+          <!--                        value="sibling">Sibling-->
+          <!--                      </option>-->
+          <!--                      <option-->
+          <!--                        value="spouse">Spouse-->
+          <!--                      </option>-->
+          <!--                    </select>-->
+          <!--                  </div>-->
+          <!--                </div>-->
+          <!--              </div>-->
+          <!--              <div class="col-md-6">-->
+          <!--                <div class="form-group">-->
+          <!--                  <label class="form-label" for="cooperator_kin_email">Email Address <span class="text-danger">*</span></label>-->
+          <!--                  <div class="form-control-group">-->
+          <!--                    <input type="email" class="form-control" name="cooperator_kin_email"-->
+          <!--                           id="cooperator_kin_email" required-->
+          <!--                    >-->
+          <!--                  </div>-->
+          <!--                </div>-->
+          <!--              </div>-->
+          <!--              <div class="col-md-6">-->
+          <!--                <div class="form-group">-->
+          <!--                  <label class="form-label" for="cooperator_kin_phone">Phone Number <span-->
+          <!--                      class="text-danger">*</span></label>-->
+          <!--                  <div class="form-control-group">-->
+          <!--                    <input type="text" class="form-control" name="cooperator_kin_phone"-->
+          <!--                           id="cooperator_kin_phone" required-->
+          <!--                    >-->
+          <!--                  </div>-->
+          <!--                </div>-->
+          <!--              </div>-->
+          <!--              <div class="col-md-6">-->
+          <!--                <div class="form-group">-->
+          <!--                  <label class="form-label" for="cooperator_kin_percentage">Percentage <span-->
+          <!--                      class="text-danger">*</span></label>-->
+          <!--                  <div class="form-control-group">-->
+          <!--                    <input type="number" class="form-control" name="cooperator_kin_percentage"-->
+          <!--                           id="cooperator_kin_percentage" required-->
+          <!--                    >-->
+          <!--                  </div>-->
+          <!--                </div>-->
+          <!--              </div>-->
+          <!--              <div class="col-12">-->
+          <!--                <div class="form-group">-->
+          <!--                  <label class="form-label" for="cooperator_kin_address">Address <span-->
+          <!--                      class="text-danger">*</span></label>-->
+          <!--                  <div class="form-control-group">-->
+          <!--                            <textarea class="form-control no-resize" name="cooperator_kin_address"-->
+          <!--                                      id="cooperator_kin_address" rows="1" required-->
+          <!--                            ></textarea>-->
+          <!--                  </div>-->
+          <!--                </div>-->
+          <!--              </div>-->
+          <!--              <div class="col-12">-->
+          <!--                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">-->
+          <!--                  <li>-->
+          <!--                    <button class="btn btn-primary">Update Next of Kin</button>-->
+          <!--                  </li>-->
+          <!--                  <li>-->
+          <!--                    <a href="#" data-dismiss="modal" class="link link-light">Cancel</a>-->
+          <!--                  </li>-->
+          <!--                </ul>-->
+          <!--              </div>-->
+          <!--            </form>-->
+          <!--          </div>-->
         </div><!-- .tab-content -->
       </div><!-- .modal-body -->
     </div><!-- .modal-content -->
   </div><!-- .modal-dialog -->
 </div><!-- .modal -->
-<?php include(APPPATH . '/Views/_scripts.php'); ?>
-<?php include(APPPATH . '/Views/_account-settings-script.php') ?>
+<?php
+include(APPPATH . '/Views/_scripts.php'); ?>
+<?php
+include(APPPATH . '/Views/_account-settings-script.php') ?>
 </body>
 </html>

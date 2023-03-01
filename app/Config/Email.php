@@ -47,24 +47,21 @@ class Email extends BaseConfig
      *
      * @var string
      */
-    public $SMTPHost = 'connexxiontelecom.com';
+    public $SMTPHost = 'mackingsemp.com';
 
     /**
      * SMTP Username
      *
      * @var string
      */
-
-//	public $SMTPUser = 'joseph@connexxiongroup.com';
-    public $SMTPUser = 'support@connexxiontelecom.com';
+    public $SMTPUser = 'info@mackingsemp.com';
 
     /**
      * SMTP Password
      *
      * @var string
      */
-    public $SMTPPass = 'T,l4q9H0ak~b';
-
+    public $SMTPPass = 'v2r6@(6GHtYH';
     /**
      * SMTP Port
      *

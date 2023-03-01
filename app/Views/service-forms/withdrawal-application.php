@@ -1,15 +1,19 @@
 <?php
+
 $session = session();
 ?>
 <!DOCTYPE html>
 <html lang="en" class="js">
-<?php include(APPPATH . '/Views/_head.php'); ?>
+<?php
+include(APPPATH . '/Views/_head.php'); ?>
 <body class="nk-body npc-crypto bg-white has-sidebar">
 <div class="nk-app-root">
   <div class="nk-main">
-    <?php include(APPPATH . '/Views/_sidebar.php'); ?>
+      <?php
+      include(APPPATH . '/Views/_sidebar.php'); ?>
     <div class="nk-wrap">
-      <?php include(APPPATH . '/Views/_header.php'); ?>
+        <?php
+        include(APPPATH . '/Views/_header.php'); ?>
       <div class="nk-content nk-content-fluid">
         <div class="container-xl wide-lg">
           <div class="nk-content-body">
@@ -43,13 +47,17 @@ $session = session();
                                     class="text-danger"> *</span></label>
                                 <div class="form-control-wrap">
                                   <select name="savings_type" id="savings-type" class="form-select form-control"
-                                          required <?php if (!$bank): ?>disabled<?php endif; ?>>
+                                          required <?php
+                                          if (!$bank): ?>disabled<?php
+                                  endif; ?>>
                                     <option value="default">Default Value</option>
-                                    <?php if (!empty($savings_types)): foreach ($savings_types as $savings_type): ?>
-                                      <option value="<?= $savings_type['contribution_type_id'] ?>">
-                                        <?= $savings_type['contribution_type_name'] ?>
-                                      </option>
-                                    <?php endforeach; endif; ?>
+                                      <?php
+                                      if (!empty($savings_types)): foreach ($savings_types as $savings_type): ?>
+                                        <option value="<?= $savings_type['contribution_type_id'] ?>">
+                                            <?= $savings_type['contribution_type_name'] ?>
+                                        </option>
+                                      <?php
+                                      endforeach; endif; ?>
                                   </select>
                                 </div>
                               </div>
@@ -66,13 +74,10 @@ $session = session();
                             </div>
                             <div class="col-12">
                               <div class="form-group">
-                                <label class="form-label font-weight-bolder">File Attachment</label>
+                                <label class="form-label font-weight-bolder">Reasons</label>
                                 <div class="form-control-wrap">
-                                  <div class="custom-file">
-                                    <input type="file" class="custom-file-input" id="withdrawal-attachment"
-                                           name="withdrawal_attachment" disabled>
-                                    <label class="custom-file-label" for="withdrawal-attachment">Choose file</label>
-                                  </div>
+                                  <textarea class="form-control" name="withdrawal_narration" id="withdrawal-narration"
+                                            rows="5"></textarea>
                                 </div>
                               </div>
                             </div>
@@ -92,16 +97,21 @@ $session = session();
                         <div class="preview-block">
                           <span class="preview-title-lg overline-title">Withdrawal Terms</span>
                         </div>
-                        <?php if (!$bank): ?>
-                          <div class="alert alert-icon alert-warning mt-1 mb-1" role="alert" id="get-started">
-                            <em class="icon ni ni-alert-circle"></em> Sorry, you have not updated your bank information
-                            and cannot proceed. Please, update your bank information details or contact the secretariat
-                          </div>
-                        <?php else: ?>
-                          <div class="alert alert-icon alert-info mt-1 mb-1" role="alert" id="get-started">
-                            <em class="icon ni ni-alert-circle"></em> Please select a savings type to get started.
-                          </div>
-                        <?php endif; ?>
+                          <?php
+                          if (!$bank): ?>
+                            <div class="alert alert-icon alert-warning mt-1 mb-1" role="alert" id="get-started">
+                              <em class="icon ni ni-alert-circle"></em> Sorry, you have not updated your bank
+                              information
+                              and cannot proceed. Please, update your bank information details or contact the
+                              secretariat
+                            </div>
+                          <?php
+                          else: ?>
+                            <div class="alert alert-icon alert-info mt-1 mb-1" role="alert" id="get-started">
+                              <em class="icon ni ni-alert-circle"></em> Please select a savings type to get started.
+                            </div>
+                          <?php
+                          endif; ?>
 
 
                         <div class="alert alert-icon alert-secondary mt-1 mb-1" role="alert" id="withdraw-details"
@@ -130,11 +140,14 @@ $session = session();
           </div>
         </div>
       </div>
-      <?php include(APPPATH . '/Views/_footer.php'); ?>
+        <?php
+        include(APPPATH . '/Views/_footer.php'); ?>
     </div>
   </div>
 </div>
-<?php include(APPPATH . '/Views/_scripts.php'); ?>
-<?php include(APPPATH . '/Views/_withdrawal-application-script.php'); ?>
+<?php
+include(APPPATH . '/Views/_scripts.php'); ?>
+<?php
+include(APPPATH . '/Views/_withdrawal-application-script.php'); ?>
 </body>
 </html>

@@ -10,6 +10,7 @@ use App\Models\CoopBankModel;
 use App\Models\CooperatorModel;
 use App\Models\DepartmentModel;
 use App\Models\ExternalGuarantorModel;
+use App\Models\GLModel;
 use App\Models\GroupModel;
 use App\Models\LoanApplicationModel;
 use App\Models\LoanFeesSetup;
@@ -62,6 +63,7 @@ class BaseController extends Controller
     protected $cooperatorModel;
     protected $departmentModel;
     protected $externalGuarantorModel;
+    protected $glModel;
     protected $groupModel;
     protected $loanApplicationModel;
     protected $loanFeesSetup;
@@ -106,6 +108,7 @@ class BaseController extends Controller
         $this->cooperatorModel = new CooperatorModel();
         $this->departmentModel = new DepartmentModel();
         $this->externalGuarantorModel = new ExternalGuarantorModel();
+        $this->glModel = new GLModel();
         $this->groupModel = new GroupModel();
         $this->loanApplicationModel = new LoanApplicationModel();
         $this->loanFeesSetup = new LoanFeesSetup();

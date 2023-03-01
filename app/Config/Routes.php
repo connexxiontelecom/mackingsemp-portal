@@ -71,10 +71,11 @@ $routes->post('account/upload-display-picture', 'Account::upload_display_picture
 $routes->post('account/change-password', 'Account::change_password');
 $routes->post('account/update-bank', 'Account::update_bank');
 $routes->post('account/update-nok', 'Account::update_nok');
+$routes->post('account/details', 'Account::update_details');
 $routes->get('security', 'Account::security');
 
 $routes->post('savings-account', 'SavingsAccount::new_savings_account');
-
+$routes->get('savings-account/fee/(:num)', 'SavingsAccount::get_contribution_type_fee/$1');
 
 $routes->get('auth/login', 'Auth::login');
 $routes->get('auth/membership', 'Auth::membership');

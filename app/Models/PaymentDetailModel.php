@@ -23,7 +23,11 @@ class PaymentDetailModel extends Model
       'pd_pg_id',
       'pd_ref_code',
       'pd_month',
-      'pd_year'
+      'pd_year',
+      '\tpd_upload_date',
+      'pd_upload_by',
+      'pd_processed_date',
+      'pd_processed_by',
     ];
 
     public function __construct()

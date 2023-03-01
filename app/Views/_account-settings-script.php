@@ -153,5 +153,42 @@
         })
       }
     })
+
+    $('form#update-basic-details').submit(function (e) {
+      e.preventDefault()
+      const email = $('#email').val()
+      const phone = $('#phone').val()
+
+      if (!email || !phone) {
+        Swal.fire("Invalid Submission", 'Please fill in all required fields!', "error")
+      } else {
+        const fd = new FormData(this)
+        Swal.fire({
+          title: 'Are you sure?',
+          text: 'Update basic details',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Confirm Update'
+        }).then(function (result) {
+          if (result.value) {
+            $.ajax({
+              url: '<?= site_url('account/details')?>',
+              type: 'post',
+              data: fd,
+              success: function (data) {
+                if (data.success) {
+                  Swal.fire('Confirmed!', data.msg, 'success').then(() => location.reload())
+                } else {
+                  Swal.fire('Sorry!', data.msg, 'error')
+                }
+              },
+              cache: false,
+              contentType: false,
+              processData: false
+            })
+          }
+        })
+      }
+    })
   })
 </script>
