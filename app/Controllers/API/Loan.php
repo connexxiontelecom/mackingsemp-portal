@@ -101,7 +101,8 @@ class Loan extends ResourceController
                           'total_dr' => $total_dr,
                           'total_cr' => $total_cr,
                           'loan_balance' => $cooperator_loan_details[0]->amount + ($total_dr - $total_cr),
-                          'loan_encumbrance_amount' => $cooperator_loan['encumbrance_amount']
+                          'loan_encumbrance_amount' => $cooperator_loan['encumbrance_amount'],
+                          'loan_disburse_date' => $cooperator_loan['disburse_date']
                         );
                         $i++;
                     }
