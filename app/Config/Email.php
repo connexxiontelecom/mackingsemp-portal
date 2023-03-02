@@ -33,7 +33,7 @@ class Email extends BaseConfig
      *
      * @var string
      */
-    public $protocol = 'smtp';
+    public $protocol;
 
     /**
      * The server path to Sendmail.
@@ -47,27 +47,27 @@ class Email extends BaseConfig
      *
      * @var string
      */
-    public $SMTPHost = 'mackingsemp.com';
+    public $SMTPHost;
 
     /**
      * SMTP Username
      *
      * @var string
      */
-    public $SMTPUser = 'info@mackingsemp.com';
+    public $SMTPUser;
 
     /**
      * SMTP Password
      *
      * @var string
      */
-    public $SMTPPass = 'v2r6@(6GHtYH';
+    public $SMTPPass;
     /**
      * SMTP Port
      *
      * @var integer
      */
-    public $SMTPPort = 587;
+    public $SMTPPort;
 
     /**
      * SMTP Timeout (in seconds)
@@ -88,7 +88,7 @@ class Email extends BaseConfig
      *
      * @var string
      */
-    public $SMTPCrypto = 'tls';
+    public $SMTPCrypto;
 
     /**
      * Enable word-wrap

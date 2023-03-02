@@ -55,7 +55,6 @@ class Auth extends ResourceController
             }
             $passwordResetModel->save($data);
 
-            $emailService->setFrom('info@mackingsemp.com', 'Mackingsemp');
             $emailService->setTo($email);
             $emailService->setSubject('Your Mobile Platform Registration OTP');
             $mail_data = [
@@ -114,7 +113,6 @@ class Auth extends ResourceController
 
             $passwordResetModel->where('token', $hashedToken)->delete();
 
-            $emailService->setFrom('info@mackingsemp.com', 'Mackingsemp');
             $emailService->setTo($email);
             $emailService->setSubject('Registration Success');
             $mail_data = [
@@ -181,7 +179,7 @@ class Auth extends ResourceController
             $iat = time();
             $exp = $iat + 3600;
             $payload = array(
-              "iss" => "Mackingsemp",
+              "iss" => "Mackings Empowerment Initiative",
               "aud" => "Members Mackingsemp",
               "sub" => $user,
               "iat" => $iat, //Time the JWT issued at
@@ -190,7 +188,6 @@ class Auth extends ResourceController
             );
             $token = JWT::encode($payload, $key, 'HS256');
 
-            $emailService->setFrom('info@mackingsemp.com', 'Mackingsemp');
             $emailService->setTo($cooperator['cooperator_email']);
             $emailService->setSubject('Login Success');
             $mail_data = [

@@ -63,5 +63,22 @@ class Account extends ResourceController
         }
     }
 
+    public function get_all_account_types(): Response
+    {
+        try {
+            $this->authLib->get_auth_user();
+            $account_types = $this->contributionTypeModel->where('loans', 0)->findAll();
+            $response = [
+              'success' => true,
+              'account_types' => $account_types
+            ];
+            return $this->respond($response);
+        } catch (\Exception $exception) {
+            return $this->fail($exception->getMessage());
+        }
+    }
 
+    public function post_new_savings_account()
+    {
+    }
 }
