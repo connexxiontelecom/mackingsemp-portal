@@ -4,11 +4,14 @@ namespace App\Controllers\API;
 
 use App\Libraries\authLib;
 use App\Models\ContributionTypeModel;
+use App\Models\GLModel;
 use App\Models\PaymentDetailModel;
 use App\Models\SavingsAccountModel;
 use CodeIgniter\API\ResponseTrait;
+use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\HTTP\Response;
 use CodeIgniter\RESTful\ResourceController;
+use Config\Database;
 
 class Account extends ResourceController
 {
@@ -19,12 +22,18 @@ class Account extends ResourceController
     private ContributionTypeModel $contributionTypeModel;
     private PaymentDetailModel $paymentDetailModel;
 
+    private BaseConnection $db;
+
+    private GLModel $GLModel;
+
     public function __construct()
     {
         $this->authLib = new authLib();
         $this->savingsAccountModel = new SavingsAccountModel();
         $this->contributionTypeModel = new ContributionTypeModel();
         $this->paymentDetailModel = new PaymentDetailModel();
+        $this->GLModel = new GLModel();
+        $this->db = Database::connect();
     }
 
     public function get_all_account_details(): Response
@@ -80,5 +89,111 @@ class Account extends ResourceController
 
     public function post_new_savings_account()
     {
+        try {
+            $user = $this->authLib->get_auth_user();
+            $staff_id = $user['cooperator_staff_id'];
+
+            $this->db->transStart();
+
+            $account_type = $this->request->getVar('account_type');
+            if (!$account_type) {
+                return $this->failValidationErrors('Account type is required');
+            }
+
+            $reason = $this->request->getVar('reason');
+            if (!$reason) {
+                return $this->failValidationErrors('Reason is required');
+            }
+
+            $account_no = $staff_id;
+            $savings_account = $this->savingsAccountModel->where([
+              'sa_account_type' => $account_type,
+              'sa_account_no' => $account_no
+            ])->first();
+
+            if ($savings_account) {
+                return $this->failValidationErrors('You have already created a savings account of this type');
+            }
+
+            $savings_account = [
+              'sa_account_type' => $account_type,
+              'sa_reason' => $reason,
+              'sa_account_no' => $account_no,
+              'sa_creation_date' => date('Y-m-d')
+            ];
+            $this->savingsAccountModel->save($savings_account);
+
+            $contribution_type = $this->contributionTypeModel->find($account_type);
+            if (!$contribution_type) {
+                return $this->failValidationErrors('This account type does not exist');
+            }
+
+            $payment_detail = [
+              "pd_staff_id" => $account_no,
+              "pd_transaction_date" => date('Y-m-d'),
+              "pd_narration" => "Activation Fee",
+              "pd_amount" => $contribution_type['fee'],
+              "pd_payment_type" => "1",
+              "pd_drcrtype" => "2",
+              "pd_ct_id" => $account_type,
+              "pd_pg_id" => null,
+              "pd_ref_code" => time(),
+              "pd_month" => date('m'),
+              "pd_year" => date('Y'),
+              "\tpd_upload_date" => null,
+              "pd_upload_by" => null,
+              "pd_processed_date" => null,
+              "pd_processed_by" => $account_no,
+            ];
+            $this->paymentDetailModel->save($payment_detail);
+
+            $firstname = $user['cooperator_first_name'];
+            $lastname = $user['cooperator_last_name'];
+            $othername = $user['cooperator_other_name'];
+
+            $gl_1 = [
+              "gl_code" => intval($contribution_type['contribution_type_glcode']),
+              "posted_by" => $account_no,
+              "narration" => $contribution_type['contribution_type_name'] . ' Activation Fee',
+              "gl_description" => $account_no . ' - ' . $firstname . ' ' . $othername . ' ' . $lastname,
+              "gl_transaction_date" => date('Y-m-d'),
+              "dr_amount" => $contribution_type['fee'],
+              "cr_amount" => "0",
+              "ref_no" => time(),
+              "bank" => "0",
+              "ob" => "0",
+              "posted" => "1",
+              "created_at" => date('Y-m-d'),
+            ];
+
+            $this->GLModel->save($gl_1);
+
+            $gl_2 = [
+              "gl_code" => 41109,
+              "posted_by" => $account_no,
+              "narration" => $contribution_type['contribution_type_name'] . ' Activation Fee',
+              "gl_description" => $account_no . ' - ' . $firstname . ' ' . $othername . ' ' . $lastname,
+              "gl_transaction_date" => date('Y-m-d'),
+              "cr_amount" => $contribution_type['fee'],
+              "dr_amount" => "0",
+              "ref_no" => time(),
+              "bank" => "0",
+              "ob" => "0",
+              "posted" => "1",
+              "created_at" => date('Y-m-d'),
+            ];
+
+            $this->GLModel->save($gl_2);
+
+            $this->db->transComplete();
+
+            $response = [
+              'success' => true,
+              'msg' => 'Your savings account was created successfully'
+            ];
+            return $this->respond($response);
+        } catch (\Exception $exception) {
+            return $this->fail($exception->getMessage());
+        }
     }
 }
