@@ -100,6 +100,7 @@ $routes->get('api/loan/outstanding', 'API\Loan::get_outstanding_loans', ['filter
 $routes->get('api/loan/guarantor/external', 'API\Loan::search_loan_external_guarantor', ['filter' => 'authFilter']);
 $routes->get('api/loan/guarantor/internal', 'API\Loan::search_loan_internal_guarantor', ['filter' => 'authFilter']);
 
+$routes->get('api/withdrawal/balance', 'API\Withdrawal::get_computed_balance', ['filter' => 'authFilter']);
 
 /*
  * --------------------------------------------------------------------
