@@ -2,6 +2,7 @@
 
 namespace App\Controllers\API;
 
+use App\Libraries\authLib;
 use App\Models\CooperatorModel;
 use App\Models\PasswordResetTokenModel;
 use CodeIgniter\API\ResponseTrait;
@@ -12,6 +13,13 @@ use Firebase\JWT\JWT;
 class Auth extends ResourceController
 {
     use ResponseTrait;
+
+    private authLib $authLib;
+
+    public function __construct()
+    {
+        $this->authLib = new authLib();
+    }
 
     public function post_register(): Response
     {
@@ -203,6 +211,22 @@ class Auth extends ResourceController
               'message' => 'Login successful',
               'token' => $token,
               'cooperator' => $cooperator
+            ];
+            return $this->respond($response);
+        } catch (\Exception $exception) {
+            return $this->fail($exception->getMessage());
+        }
+    }
+
+    public function get_cooperator_details(): Response
+    {
+        try {
+            $user = $this->authLib->get_auth_user();
+            $user['cooperator_password'] = null;
+            
+            $response = [
+              'success' => true,
+              'cooperator' => $user
             ];
             return $this->respond($response);
         } catch (\Exception $exception) {
