@@ -4,6 +4,7 @@ namespace App\Controllers\API;
 
 use App\Libraries\authLib;
 use App\Models\CooperatorModel;
+use App\Models\EnquiriesModel;
 use App\Models\PasswordResetTokenModel;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\HTTP\Response;
@@ -16,11 +17,13 @@ class Auth extends ResourceController
 
     private authLib $authLib;
     private CooperatorModel $cooperatorModel;
+    private EnquiriesModel $enquiriesModel;
 
     public function __construct()
     {
         $this->authLib = new authLib();
         $this->cooperatorModel = new CooperatorModel();
+        $this->enquiriesModel = new EnquiriesModel();
     }
 
     public function post_register(): Response
@@ -305,6 +308,50 @@ class Auth extends ResourceController
             $response = [
               'success' => true,
               'msg' => 'Cooperator password updated successfully'
+            ];
+            return $this->respond($response);
+        } catch (\Exception $exception) {
+            return $this->fail($exception->getMessage());
+        }
+    }
+
+    public function post_cooperator_enquiry(): Response
+    {
+        try {
+            $user = $this->authLib->get_auth_user();
+            $emailService = \Config\Services::email();
+
+            $subject = $this->request->getVar('subject');
+            if (!$subject) {
+                return $this->failValidationErrors('Subject is required');
+            }
+
+            $message = $this->request->getVar('message');
+            if (!$message) {
+                return $this->failValidationErrors('Message is required');
+            }
+
+            $enquiry = [
+              'staff_id' => $user['cooperator_staff_id'],
+              'subject' => $subject,
+              'message' => $message
+            ];
+            $this->enquiriesModel->save($enquiry);
+
+            $emailService->setTo('support@mackingsemp.com');
+            $emailService->setSubject('New Cooperator Enquiry/Feedback');
+            $mail_data = [
+              'user' => $user['cooperator_first_name'] . ' ' . $user['cooperator_last_name'] . ', ' . $user['cooperator_staff_id'],
+              'subject' => $subject,
+              'message' => $message
+            ];
+            $body = view('mail/enquiry', $mail_data);
+            $emailService->setMessage($body);
+            $emailService->send(false);
+
+            $response = [
+              'success' => true,
+              'msg' => 'Enquiry sent successfully'
             ];
             return $this->respond($response);
         } catch (\Exception $exception) {
