@@ -123,8 +123,7 @@ class WithdrawalApplication extends BaseController
                             $this->withdrawModel->save($withdrawal_application_data);
                             $response_data['success'] = true;
                             $response_data['msg'] = 'You have successfully applied for a ' . number_format($withdrawal_amount,
-                                2) . '
-              amount withdrawal. You will be charged ' . number_format($withdrawal_charges,
+                                2) . ' amount withdrawal. You will be charged ' . number_format($withdrawal_charges,
                                 2) . ' for this withdrawal.';
                             return $this->response->setJSON($response_data);
                         }

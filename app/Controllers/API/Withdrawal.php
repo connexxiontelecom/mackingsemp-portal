@@ -3,10 +3,12 @@
 namespace App\Controllers\API;
 
 use App\Libraries\authLib;
+use App\Models\AccountClosureModel;
 use App\Models\ContributionTypeModel;
 use App\Models\LoanModel;
 use App\Models\PaymentDetailModel;
 use App\Models\PolicyConfigModel;
+use App\Models\WithdrawModel;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\HTTP\Response;
 use CodeIgniter\RESTful\ResourceController;
@@ -20,6 +22,8 @@ class Withdrawal extends ResourceController
     private ContributionTypeModel $contributionTypeModel;
     private PaymentDetailModel $paymentDetailModel;
     private PolicyConfigModel $policyConfigModel;
+    private AccountClosureModel $accountClosureModel;
+    private WithdrawModel $withdrawModel;
 
 
     public function __construct()
@@ -29,6 +33,8 @@ class Withdrawal extends ResourceController
         $this->loanModel = new LoanModel();
         $this->paymentDetailModel = new PaymentDetailModel();
         $this->policyConfigModel = new PolicyConfigModel();
+        $this->accountClosureModel = new AccountClosureModel();
+        $this->withdrawModel = new WithdrawModel();
     }
 
     public function get_computed_balance(): Response
@@ -78,6 +84,80 @@ class Withdrawal extends ResourceController
                 'encumbered_amount' => $encumbered_amount,
                 'withdrawal_charge' => $withdrawal_charge
               ]
+            ];
+            return $this->respond($response);
+        } catch (\Exception $exception) {
+            return $this->fail($exception->getMessage());
+        }
+    }
+
+    public function post_new_withdrawal_application(): Response
+    {
+        try {
+            $user = $this->authLib->get_auth_user();
+            $staff_id = $user['cooperator_staff_id'];
+            $status = $user['cooperator_status'];
+            if ($status !== '2') {
+                return $this->failValidationErrors('Your account is currently frozen');
+            }
+            $account_closure = $this->accountClosureModel->check_account_closure($staff_id);
+            if (!empty($account_closure)) {
+                return $this->failValidationErrors('Your account is currently undergoing closure');
+            }
+
+            $pending_withdrawals = $this->withdrawModel->where([
+              'withdraw_status <' => 3,
+              'disburse' => 0,
+              'withdraw_staff_id' => $staff_id
+            ])->findAll();
+
+            if (!empty($pending_withdrawals)) {
+                return $this->failValidationErrors('You currently have pending withdrawals');
+            }
+
+            $savings_type = $this->request->getVar('savings_type');
+            if (!$savings_type) {
+                return $this->failValidationErrors('Savings type is required');
+            }
+
+            $withdrawal_amount = $this->request->getVar('withdrawal_amount');
+            if (!$withdrawal_amount) {
+                return $this->failValidationErrors('Withdrawal amount is required');
+            }
+
+            $withdrawable_amount = $this->request->getVar('withdrawable_amount');
+            if (!$withdrawable_amount) {
+                return $this->failValidationErrors('Withdrawable amount is required');
+            }
+
+            $withdrawal_narration = $this->request->getVar('withdrawal_narration');
+            if (!$withdrawal_narration) {
+                return $this->failValidationErrors('Withdrawal narration is required');
+            }
+
+            if ($withdrawal_amount > $withdrawable_amount) {
+                return $this->failValidationErrors('Your withdrawal amount exceeds the amount you can withdraw');
+            }
+
+            $policy_config = $this->policyConfigModel->first();
+            $withdrawal_charge = $policy_config['savings_withdrawal_charge'];
+            $withdrawal_charges = ($withdrawal_charge / 100) * $withdrawal_amount;
+            $withdrawal_application_data = array(
+              'withdraw_staff_id' => $staff_id,
+              'withdraw_ct_id' => $savings_type,
+              'withdraw_amount' => $withdrawal_amount,
+              'withdraw_charges' => $withdrawal_charges,
+              'withdraw_date' => date('Y-m-d'),
+              'withdraw_status' => 0,
+              'withdraw_narration' => $withdrawal_narration
+            );
+            $this->withdrawModel->save($withdrawal_application_data);
+
+            $response = [
+              'success' => true,
+              'msg' => 'You have successfully applied for a ' . number_format($withdrawal_amount,
+                  2) . ' amount withdrawal. You will be charged ' . number_format($withdrawal_charges,
+                  2) . ' for this withdrawal.'
             ];
             return $this->respond($response);
         } catch (\Exception $exception) {
