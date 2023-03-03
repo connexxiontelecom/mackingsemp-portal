@@ -15,10 +15,12 @@ class Auth extends ResourceController
     use ResponseTrait;
 
     private authLib $authLib;
+    private CooperatorModel $cooperatorModel;
 
     public function __construct()
     {
         $this->authLib = new authLib();
+        $this->cooperatorModel = new CooperatorModel();
     }
 
     public function post_register(): Response
@@ -223,10 +225,43 @@ class Auth extends ResourceController
         try {
             $user = $this->authLib->get_auth_user();
             $user['cooperator_password'] = null;
-            
+
             $response = [
               'success' => true,
               'cooperator' => $user
+            ];
+            return $this->respond($response);
+        } catch (\Exception $exception) {
+            return $this->fail($exception->getMessage());
+        }
+    }
+
+    public function patch_cooperator_details(): Response
+    {
+        try {
+            $user = $this->authLib->get_auth_user();
+
+            $email = $this->request->getVar('email');
+            if (!$email) {
+                return $this->failValidationErrors('Email is required');
+            }
+
+            $phone = $this->request->getVar('phone');
+            if (!$phone) {
+                return $this->failValidationErrors('Phone is required');
+            }
+
+            $cooperator_data = [
+              'cooperator_id' => $user['cooperator_id'],
+              'cooperator_email' => $email,
+              'cooperator_telephone' => $phone
+            ];
+            
+            $this->cooperatorModel->save($cooperator_data);
+
+            $response = [
+              'success' => true,
+              'msg' => 'Cooperator details updated successfully'
             ];
             return $this->respond($response);
         } catch (\Exception $exception) {
