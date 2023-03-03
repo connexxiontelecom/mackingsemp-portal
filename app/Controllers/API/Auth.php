@@ -256,12 +256,55 @@ class Auth extends ResourceController
               'cooperator_email' => $email,
               'cooperator_telephone' => $phone
             ];
-            
+
             $this->cooperatorModel->save($cooperator_data);
 
             $response = [
               'success' => true,
               'msg' => 'Cooperator details updated successfully'
+            ];
+            return $this->respond($response);
+        } catch (\Exception $exception) {
+            return $this->fail($exception->getMessage());
+        }
+    }
+
+    public function patch_cooperator_password(): Response
+    {
+        try {
+            $user = $this->authLib->get_auth_user();
+            $current_password = $this->request->getVar('password');
+            if (!$current_password) {
+                return $this->failValidationErrors('Password is required');
+            }
+
+            if (!password_verify($current_password, $user['cooperator_password'])) {
+                return $this->failValidationErrors('The password is invalid');
+            }
+
+            $new_password = $this->request->getVar('new_password');
+            if (!$new_password) {
+                return $this->failValidationErrors('New password is required');
+            }
+
+            $confirm_password = $this->request->getVar('confirm_password');
+            if (!$confirm_password) {
+                return $this->failValidationErrors('Password confirmation is required');
+            }
+
+            if ($new_password !== $confirm_password) {
+                return $this->failValidationErrors('The new password does not match the password confirmation');
+            }
+
+            $cooperator_data = [
+              'cooperator_id' => $user['cooperator_id'],
+              'cooperator_password' => password_hash($new_password, PASSWORD_DEFAULT)
+            ];
+            $this->cooperatorModel->save($cooperator_data);
+
+            $response = [
+              'success' => true,
+              'msg' => 'Cooperator password updated successfully'
             ];
             return $this->respond($response);
         } catch (\Exception $exception) {
