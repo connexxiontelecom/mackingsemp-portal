@@ -237,6 +237,29 @@ class Loan extends ResourceController
                 return $this->failValidationErrors('Loan type is required');
             }
 
+            $cooperator_pending_loans = $this->loanApplicationModel
+              ->where([
+                'staff_id' => $staff_id,
+                'loan_type' => $loan_setup_id,
+                'verify' => 0,
+                'approve' => 0
+              ])->findAll();
+            if (!empty($cooperator_pending_loans)) {
+                return $this->failValidationErrors('You already have a pending loan of this loan type');
+            }
+
+
+            $cooperator_active_loans = $this->loanModel
+              ->where([
+                'staff_id' => $staff_id,
+                'disburse' => 1,
+                'paid_back' => 0,
+                'loan_type' => $loan_setup_id
+              ])->findAll();
+            if (!empty($cooperator_active_loans)) {
+                return $this->failValidationErrors('You already have an active loan of this loan type');
+            }
+
             $loan_duration = $this->request->getVar('loan_duration_m') ?? $this->request->getVar('loan_duration_d');
             if (!$loan_duration) {
                 return $this->failValidationErrors('Loan duration (monthly or daily) is required');
