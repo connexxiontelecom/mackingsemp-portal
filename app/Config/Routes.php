@@ -87,6 +87,8 @@ $routes->get('logout', 'Auth::logout');
 $routes->post('api/auth/register', 'API\Auth::post_register');
 $routes->patch('api/auth/register', 'API\Auth::patch_register');
 $routes->post('api/auth/login', 'API\Auth::post_login');
+$routes->post('api/auth/forgot-password', 'API\Auth::post_forgot_password');
+$routes->patch('api/auth/reset-password', 'API\Auth::patch_reset_password');
 $routes->get('api/auth/cooperator', 'API\Auth::get_cooperator_details', ['filter' => 'authFilter']);
 $routes->patch('api/auth/cooperator/details', 'API\Auth::patch_cooperator_details', ['filter' => 'authFilter']);
 $routes->patch('api/auth/cooperator/password', 'API\Auth::patch_cooperator_password', ['filter' => 'authFilter']);

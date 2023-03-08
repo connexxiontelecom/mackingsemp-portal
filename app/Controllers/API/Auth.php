@@ -3,8 +3,10 @@
 namespace App\Controllers\API;
 
 use App\Libraries\authLib;
+use App\Models\BankModel;
 use App\Models\CooperatorModel;
 use App\Models\EnquiriesModel;
+use App\Models\GroupModel;
 use App\Models\PasswordResetTokenModel;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\HTTP\Response;
@@ -18,12 +20,18 @@ class Auth extends ResourceController
     private authLib $authLib;
     private CooperatorModel $cooperatorModel;
     private EnquiriesModel $enquiriesModel;
+    private PasswordResetTokenModel $passwordResetTokenModel;
+    private BankModel $bankModel;
+    private GroupModel $groupModel;
 
     public function __construct()
     {
         $this->authLib = new authLib();
         $this->cooperatorModel = new CooperatorModel();
         $this->enquiriesModel = new EnquiriesModel();
+        $this->passwordResetTokenModel = new PasswordResetTokenModel();
+        $this->bankModel = new BankModel();
+        $this->groupModel = new GroupModel();
     }
 
     public function post_register(): Response
@@ -228,7 +236,8 @@ class Auth extends ResourceController
         try {
             $user = $this->authLib->get_auth_user();
             $user['cooperator_password'] = null;
-
+            $user['cooperator_bank'] = $this->bankModel->find($user['cooperator_bank_id']) ?? null;
+            $user['cooperator_group'] = $this->groupModel->find($user['cooperator_group_id']) ?? null;
             $response = [
               'success' => true,
               'cooperator' => $user
@@ -359,4 +368,128 @@ class Auth extends ResourceController
         }
     }
 
+    public function post_forgot_password(): Response
+    {
+        try {
+            $emailService = \Config\Services::email();
+
+            $email = $this->request->getVar('email');
+            if (!$email) {
+                return $this->failValidationErrors('Email is required');
+            }
+
+            $imei_number = $this->request->getVar('imei_number') ?? null;
+            if (!$imei_number) {
+                return $this->failValidationErrors('IMEI number is required');
+            }
+
+            $cooperator = $this->cooperatorModel->where('cooperator_email', $email)->first();
+            if (!$cooperator) {
+                return $this->failNotFound('Cooperator with those credentials does not exist');
+            }
+
+            if ($cooperator['cooperator_imei'] !== $imei_number) {
+                return $this->failValidationErrors('Profile does not exist, you are not registered on this device');
+            }
+
+            $characters = '01234567890123456789';
+            $plaintext = '';
+
+            for ($i = 0; $i < 4; $i++) {
+                $index = rand(0, strlen($characters) - 1);
+                $plaintext .= $characters[$index];
+            }
+
+            $data['token'] = hash("sha256", $plaintext);
+            $data['email'] = $email;
+
+            $password_reset_token = $this->passwordResetTokenModel->where('email', $email)->first();
+            if ($password_reset_token) {
+                $data['id'] = $password_reset_token['id'];
+            }
+            $this->passwordResetTokenModel->save($data);
+
+            $emailService->setTo($cooperator['cooperator_email']);
+            $emailService->setSubject('Password Reset');
+            $mail_data = [
+              'user' => $cooperator['cooperator_first_name'] . ' ' . $cooperator['cooperator_last_name'],
+              'token' => $plaintext
+            ];
+            $body = view('mail/forgot-password', $mail_data);
+            $emailService->setMessage($body);
+            $emailService->send(false);
+
+            $response = [
+              'success' => true,
+              'msg' => 'Password reset token sent to your email'
+            ];
+            return $this->respond($response);
+        } catch (\Exception $exception) {
+            return $this->fail($exception->getMessage());
+        }
+    }
+
+    public function patch_reset_password(): Response
+    {
+        try {
+            $emailService = \Config\Services::email();
+
+            $new_password = $this->request->getVar('new_password');
+            if (!$new_password) {
+                return $this->failValidationErrors('New password is required');
+            }
+
+            $confirm_password = $this->request->getVar('confirm_password');
+            if (!$confirm_password) {
+                return $this->failValidationErrors('Password confirmation is required');
+            }
+
+            $token = $this->request->getVar('token') ?? null;
+            if (!$token) {
+                return $this->failValidationErrors('Token is required');
+            }
+
+            $hashedToken = hash("sha256", $token);
+            $password_reset_token = $this->passwordResetTokenModel->where('token', $hashedToken)->first();
+            if (!$password_reset_token) {
+                return $this->fail('Password reset token is invalid');
+            }
+
+            $email = $password_reset_token['email'];
+            $cooperator = $this->cooperatorModel->where('cooperator_email', $email)->first();
+            if (!$cooperator) {
+                return $this->fail('Cooperator email is invalid');
+            }
+
+            if ($new_password !== $confirm_password) {
+                return $this->failValidationErrors('The new password does not match the password confirmation');
+            }
+
+            $cooperator_data = [
+              'cooperator_id' => $cooperator['cooperator_id'],
+              'cooperator_password' => password_hash($new_password, PASSWORD_DEFAULT)
+            ];
+            $this->cooperatorModel->save($cooperator_data);
+
+            $this->passwordResetTokenModel->where('token', $hashedToken)->delete();
+
+            $emailService->setTo($cooperator['cooperator_email']);
+            $emailService->setSubject('Password Reset Success');
+            $mail_data = [
+              'user' => $cooperator['cooperator_first_name'] . ' ' . $cooperator['cooperator_last_name'],
+            ];
+
+            $body = view('mail/reset-success', $mail_data);
+            $emailService->setMessage($body);
+            $emailService->send(false);
+
+            $response = [
+              'success' => true,
+              'message' => 'Cooperator password reset successfully'
+            ];
+            return $this->respond($response);
+        } catch (\Exception $exception) {
+            return $this->fail($exception->getMessage());
+        }
+    }
 }
