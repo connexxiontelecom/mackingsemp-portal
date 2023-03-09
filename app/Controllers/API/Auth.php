@@ -485,7 +485,7 @@ class Auth extends ResourceController
 
             $response = [
               'success' => true,
-              'message' => 'Cooperator password reset successfully'
+              'msg' => 'Cooperator password reset successfully'
             ];
             return $this->respond($response);
         } catch (\Exception $exception) {
