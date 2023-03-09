@@ -57,63 +57,65 @@ class SavingsAccount extends BaseController
             return $this->response->setJSON($response_data);
         }
 
-        $payment_detail = [
-          "pd_staff_id" => $post_data['sa_account_no'],
-          "pd_transaction_date" => date('Y-m-d'),
-          "pd_narration" => "Activation Fee",
-          "pd_amount" => $contribution_type['fee'],
-          "pd_payment_type" => "1",
-          "pd_drcrtype" => "2",
-          "pd_ct_id" => $post_data['sa_account_type'],
-          "pd_pg_id" => null,
-          "pd_ref_code" => time(),
-          "pd_month" => date('m'),
-          "pd_year" => date('Y'),
-          "\tpd_upload_date" => null,
-          "pd_upload_by" => null,
-          "pd_processed_date" => null,
-          "pd_processed_by" => $post_data['sa_account_no'],
-        ];
+        if ($contribution_type['fee'] > 0) {
+            $payment_detail = [
+              "pd_staff_id" => $post_data['sa_account_no'],
+              "pd_transaction_date" => date('Y-m-d'),
+              "pd_narration" => "Activation Fee",
+              "pd_amount" => $contribution_type['fee'],
+              "pd_payment_type" => "1",
+              "pd_drcrtype" => "2",
+              "pd_ct_id" => $contribution_type['contribution_type_id'],
+              "pd_pg_id" => null,
+              "pd_ref_code" => time(),
+              "pd_month" => date('m'),
+              "pd_year" => date('Y'),
+              "\tpd_upload_date" => null,
+              "pd_upload_by" => null,
+              "pd_processed_date" => null,
+              "pd_processed_by" => $post_data['sa_account_no'],
+            ];
 
-        $this->paymentDetailModel->save($payment_detail);
+            $this->paymentDetailModel->save($payment_detail);
 
-        $firstname = $this->session->get('firstname');
-        $lastname = $this->session->get('lastname');
-        $othername = $this->session->get('othername');
+            $firstname = $this->session->get('firstname');
+            $lastname = $this->session->get('lastname');
+            $othername = $this->session->get('othername');
 
-        $gl_1 = [
-          "gl_code" => intval($contribution_type['contribution_type_glcode']),
-          "posted_by" => $post_data['sa_account_no'],
-          "narration" => $contribution_type['contribution_type_name'] . ' Activation Fee',
-          "gl_description" => $post_data['sa_account_no'] . ' - ' . $firstname . ' ' . $othername . ' ' . $lastname,
-          "gl_transaction_date" => date('Y-m-d'),
-          "dr_amount" => $contribution_type['fee'],
-          "cr_amount" => "0",
-          "ref_no" => time(),
-          "bank" => "0",
-          "ob" => "0",
-          "posted" => "1",
-          "created_at" => date('Y-m-d'),
-        ];
+            $gl_1 = [
+              "gl_code" => intval($contribution_type['contribution_type_glcode']),
+              "posted_by" => $post_data['sa_account_no'],
+              "narration" => $contribution_type['contribution_type_name'] . ' Activation Fee',
+              "gl_description" => $post_data['sa_account_no'] . ' - ' . $firstname . ' ' . $othername . ' ' . $lastname,
+              "gl_transaction_date" => date('Y-m-d'),
+              "dr_amount" => $contribution_type['fee'],
+              "cr_amount" => "0",
+              "ref_no" => time(),
+              "bank" => "0",
+              "ob" => "0",
+              "posted" => "1",
+              "created_at" => date('Y-m-d'),
+            ];
 
-        $this->glModel->save($gl_1);
+            $this->glModel->save($gl_1);
 
-        $gl_2 = [
-          "gl_code" => 41109,
-          "posted_by" => $post_data['sa_account_no'],
-          "narration" => $contribution_type['contribution_type_name'] . ' Activation Fee',
-          "gl_description" => $post_data['sa_account_no'] . ' - ' . $firstname . ' ' . $othername . ' ' . $lastname,
-          "gl_transaction_date" => date('Y-m-d'),
-          "cr_amount" => $contribution_type['fee'],
-          "dr_amount" => "0",
-          "ref_no" => time(),
-          "bank" => "0",
-          "ob" => "0",
-          "posted" => "1",
-          "created_at" => date('Y-m-d'),
-        ];
+            $gl_2 = [
+              "gl_code" => 41109,
+              "posted_by" => $post_data['sa_account_no'],
+              "narration" => $contribution_type['contribution_type_name'] . ' Activation Fee',
+              "gl_description" => $post_data['sa_account_no'] . ' - ' . $firstname . ' ' . $othername . ' ' . $lastname,
+              "gl_transaction_date" => date('Y-m-d'),
+              "cr_amount" => $contribution_type['fee'],
+              "dr_amount" => "0",
+              "ref_no" => time(),
+              "bank" => "0",
+              "ob" => "0",
+              "posted" => "1",
+              "created_at" => date('Y-m-d'),
+            ];
 
-        $this->glModel->save($gl_2);
+            $this->glModel->save($gl_2);
+        }
 
         $this->db->transComplete();
 
