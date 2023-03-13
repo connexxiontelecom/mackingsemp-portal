@@ -22,5 +22,6 @@ class GLModel extends Model
       'ob',
       'posted',
       'created_at',
+      'branch'
     ];
 }

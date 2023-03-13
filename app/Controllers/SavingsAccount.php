@@ -95,6 +95,7 @@ class SavingsAccount extends BaseController
               "ob" => "0",
               "posted" => "1",
               "created_at" => date('Y-m-d'),
+              'branch' => $this->session->get('branch_id')
             ];
 
             $this->glModel->save($gl_1);
@@ -112,6 +113,7 @@ class SavingsAccount extends BaseController
               "ob" => "0",
               "posted" => "1",
               "created_at" => date('Y-m-d'),
+              'branch' => $this->session->get('branch_id')
             ];
 
             $this->glModel->save($gl_2);

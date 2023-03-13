@@ -27,30 +27,34 @@ class Auth extends BaseController
             if ($cooperator) {
                 if (password_verify($password, $cooperator['cooperator_password'])) {
                     $user_data = array(
-                        'staff_id' => $cooperator['cooperator_staff_id'],
-                        'firstname' => $cooperator['cooperator_first_name'],
-                        'lastname' => $cooperator['cooperator_last_name'],
-                        'othername' => $cooperator['cooperator_other_name'],
-                        'dob' => $cooperator['cooperator_dob'],
-                        'email' => $cooperator['cooperator_email'],
-                        'address' => $cooperator['cooperator_address'],
-                        'city' => $cooperator['cooperator_city'],
-                        'state' => $this->stateModel->where('state_id', $cooperator['cooperator_state_id'])->first(),
-                        'department' => $this->departmentModel->where('department_id', $cooperator['cooperator_department_id'])->first(),
-                        'location' => $this->locationModel->where('location_id', $cooperator['cooperator_location_id'])->first(),
-                        'payroll_group' => $this->payrollGroupModel->where('pg_id', $cooperator['cooperator_payroll_group_id'])->first(),
-                        'bank' => $this->bankModel->where('bank_id', $cooperator['cooperator_bank_id'])->first(),
-                        'account_number' => $cooperator['cooperator_account_number'],
-                        'bank_branch' => $cooperator['cooperator_bank_branch'],
-                        'sort_code' => $cooperator['cooperator_sort_code'],
-                        'date' => $cooperator['cooperator_date'],
-                        'approved_date' => $cooperator['cooperator_approved_date'],
-                        'savings' => $cooperator['cooperator_savings'],
-                        'status' => $cooperator['cooperator_status'],
-                        'regular_savings' => $this->_get_regular_savings_amount($cooperator['cooperator_staff_id']),
-                        'savings_types_amounts_list' => $this->_get_savings_types_amounts($cooperator['cooperator_staff_id']),
-                        'group' => $this->groupModel->where('gs_id', $cooperator['cooperator_group_id'])->first(),
-                        'active' => true
+                      'staff_id' => $cooperator['cooperator_staff_id'],
+                      'firstname' => $cooperator['cooperator_first_name'],
+                      'lastname' => $cooperator['cooperator_last_name'],
+                      'othername' => $cooperator['cooperator_other_name'],
+                      'dob' => $cooperator['cooperator_dob'],
+                      'email' => $cooperator['cooperator_email'],
+                      'address' => $cooperator['cooperator_address'],
+                      'city' => $cooperator['cooperator_city'],
+                      'state' => $this->stateModel->where('state_id', $cooperator['cooperator_state_id'])->first(),
+                      'department' => $this->departmentModel->where('department_id',
+                        $cooperator['cooperator_department_id'])->first(),
+                      'location' => $this->locationModel->where('location_id',
+                        $cooperator['cooperator_location_id'])->first(),
+                      'payroll_group' => $this->payrollGroupModel->where('pg_id',
+                        $cooperator['cooperator_payroll_group_id'])->first(),
+                      'bank' => $this->bankModel->where('bank_id', $cooperator['cooperator_bank_id'])->first(),
+                      'account_number' => $cooperator['cooperator_account_number'],
+                      'bank_branch' => $cooperator['cooperator_bank_branch'],
+                      'sort_code' => $cooperator['cooperator_sort_code'],
+                      'date' => $cooperator['cooperator_date'],
+                      'approved_date' => $cooperator['cooperator_approved_date'],
+                      'savings' => $cooperator['cooperator_savings'],
+                      'status' => $cooperator['cooperator_status'],
+                      'regular_savings' => $this->_get_regular_savings_amount($cooperator['cooperator_staff_id']),
+                      'savings_types_amounts_list' => $this->_get_savings_types_amounts($cooperator['cooperator_staff_id']),
+                      'group' => $this->groupModel->where('gs_id', $cooperator['cooperator_group_id'])->first(),
+                      'branch_id' => $cooperator['cooperator_branch_id'],
+                      'active' => true
                     );
                     $this->session->set($user_data);
                     $this->session->setFlashdata('login_success', 'You have logged in successfully!');
@@ -95,7 +99,8 @@ class Auth extends BaseController
             return $this->response->setJSON($response_data);
         }
 
-        $application = $this->applicationModel->where('application_telephone', $post_data['application_telephone'])->findAll();
+        $application = $this->applicationModel->where('application_telephone',
+          $post_data['application_telephone'])->findAll();
         if ($application) {
             $response_data['success'] = false;
             $response_data['msg'] = 'The telephone number already exists';
@@ -116,12 +121,12 @@ class Auth extends BaseController
         $_POST['application_dob'] = $dob->format('Y-m-d');
 
         $s3Client = new S3Client([
-            'version' => 'latest',
-            'region' => getenv('AWS_REGION'),
-            'credentials' => [
-                'key' => getenv('ACCESS_KEY_ID'),
-                'secret' => getenv('SECRET_ACCESS_KEY')
-            ]
+          'version' => 'latest',
+          'region' => getenv('AWS_REGION'),
+          'credentials' => [
+            'key' => getenv('ACCESS_KEY_ID'),
+            'secret' => getenv('SECRET_ACCESS_KEY')
+          ]
         ]);
         $bucket = getenv('BUCKET_NAME');
 
@@ -138,9 +143,9 @@ class Auth extends BaseController
 
             try {
                 $result = $s3Client->putObject([
-                    'Bucket' => $bucket,
-                    'Key' => $key,
-                    'Body' => fopen($filepath, 'r'),
+                  'Bucket' => $bucket,
+                  'Key' => $key,
+                  'Body' => fopen($filepath, 'r'),
                 ]);
             } catch (\Exception $e) {
                 $response_data['success'] = false;
@@ -159,9 +164,9 @@ class Auth extends BaseController
 
             try {
                 $result = $s3Client->putObject([
-                    'Bucket' => $bucket,
-                    'Key' => $key,
-                    'Body' => fopen($filepath, 'r'),
+                  'Bucket' => $bucket,
+                  'Key' => $key,
+                  'Body' => fopen($filepath, 'r'),
                 ]);
             } catch (\Exception $e) {
                 $response_data['success'] = false;
@@ -180,9 +185,9 @@ class Auth extends BaseController
 
             try {
                 $result = $s3Client->putObject([
-                    'Bucket' => $bucket,
-                    'Key' => $key,
-                    'Body' => fopen($filepath, 'r'),
+                  'Bucket' => $bucket,
+                  'Key' => $key,
+                  'Body' => fopen($filepath, 'r'),
                 ]);
             } catch (\Exception $e) {
                 $response_data['success'] = false;

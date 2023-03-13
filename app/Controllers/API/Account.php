@@ -165,6 +165,7 @@ class Account extends ResourceController
                   "ob" => "0",
                   "posted" => "1",
                   "created_at" => date('Y-m-d'),
+                  'branch' => $user['cooperator_branch_id'],
                 ];
 
                 $this->GLModel->save($gl_1);
@@ -182,6 +183,7 @@ class Account extends ResourceController
                   "ob" => "0",
                   "posted" => "1",
                   "created_at" => date('Y-m-d'),
+                  'branch' => $user['cooperator_branch_id'],
                 ];
 
                 $this->GLModel->save($gl_2);
