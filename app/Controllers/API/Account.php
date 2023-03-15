@@ -153,7 +153,7 @@ class Account extends ResourceController
                 $othername = $user['cooperator_other_name'];
 
                 $gl_1 = [
-                  "gl_code" => intval($contribution_type['contribution_type_glcode']),
+                  "glcode" => intval($contribution_type['contribution_type_glcode']),
                   "posted_by" => $account_no,
                   "narration" => $contribution_type['contribution_type_name'] . ' Activation Fee',
                   "gl_description" => $account_no . ' - ' . $firstname . ' ' . $othername . ' ' . $lastname,
@@ -171,7 +171,7 @@ class Account extends ResourceController
                 $this->GLModel->save($gl_1);
 
                 $gl_2 = [
-                  "gl_code" => 41109,
+                  "glcode" => 41109,
                   "posted_by" => $account_no,
                   "narration" => $contribution_type['contribution_type_name'] . ' Activation Fee',
                   "gl_description" => $account_no . ' - ' . $firstname . ' ' . $othername . ' ' . $lastname,

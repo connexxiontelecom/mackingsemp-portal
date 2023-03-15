@@ -10,7 +10,7 @@ class GLModel extends Model
     protected $primaryKey = 'gl_id';
     protected $allowedFields = [
       'gl_id',
-      'gl_code',
+      'glcode',
       'posted_by',
       'narration',
       'gl_description',
