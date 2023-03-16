@@ -218,6 +218,22 @@ class BaseController extends Controller
                       'loan_encumbrance_amount' => $cooperator_loan['encumbrance_amount']
                     );
                     $i++;
+                } else {
+                    $cooperator_loan_details = $this->loanModel->get_cooperator_loans_no_repayment_by_staff_id_loan_id($staff_id,
+                      $cooperator_loan['loan_id']);
+                    if (!empty($cooperator_loan_details)) {
+                        $loans[$i] = array(
+                          'loan_id' => $cooperator_loan_details[0]->loan_id,
+                          'loan_type' => $cooperator_loan_details[0]->loan_description,
+                          'loan_principal' => $cooperator_loan_details[0]->amount,
+                          'total_interest' => $total_interest,
+                          'total_dr' => $total_dr,
+                          'total_cr' => $total_cr,
+                          'loan_balance' => $cooperator_loan_details[0]->amount + ($total_dr - $total_cr),
+                          'loan_encumbrance_amount' => $cooperator_loan['encumbrance_amount']
+                        );
+                        $i++;
+                    }
                 }
             }
         }
@@ -240,6 +256,7 @@ class BaseController extends Controller
             $loan_details['loan_details'] = $cooperator_loan_details;
             $loan_details['no_activity'] = false;
         }
+
         return $loan_details;
     }
 

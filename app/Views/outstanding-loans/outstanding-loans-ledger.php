@@ -1,4 +1,5 @@
 <?php
+
 $session = session();
 $loan_details = $outstanding_loan_details['loan_details'];
 $no_activity = $outstanding_loan_details['no_activity'];
@@ -6,13 +7,16 @@ $loan_detail = $loan_details[0];
 ?>
 <!DOCTYPE html>
 <html lang="en" class="js">
-<?php include(APPPATH . '/Views/_head.php'); ?>
+<?php
+include(APPPATH . '/Views/_head.php'); ?>
 <body class="nk-body npc-crypto bg-white has-sidebar">
 <div class="nk-app-root">
   <div class="nk-main">
-    <?php include(APPPATH . '/Views/_sidebar.php'); ?>
+      <?php
+      include(APPPATH . '/Views/_sidebar.php'); ?>
     <div class="nk-wrap">
-      <?php include(APPPATH . '/Views/_header.php'); ?>
+        <?php
+        include(APPPATH . '/Views/_header.php'); ?>
       <div class="nk-content nk-content-fluid">
         <div class="container-xl wide-lg">
           <div class="nk-content-body">
@@ -33,10 +37,10 @@ $loan_detail = $loan_details[0];
                       <p>
                         This is the periodic summary for this loan as at today
                         <em>
-                          <?php
-                          $date = date_create();
-                          echo date_format($date, 'd M Y');
-                          ?>
+                            <?php
+                            $date = date_create();
+                            echo date_format($date, 'd M Y');
+                            ?>
                         </em>
                         .
                       </p>
@@ -69,7 +73,8 @@ $loan_detail = $loan_details[0];
                             <div class="profile-ud-item">
                               <div class="profile-ud wider">
                                 <span class="profile-ud-label">Interest Rate</span>
-                                <span class="profile-ud-value"><?= number_format($loan_detail->ls_interest_rate, 2); ?> %</span>
+                                <span class="profile-ud-value"><?= number_format($loan_detail->interest_rate,
+                                      2); ?> %</span>
                               </div>
                             </div>
                             <div class="profile-ud-item">
@@ -164,29 +169,31 @@ $loan_detail = $loan_details[0];
                     </tr>
                     </thead>
                     <tbody>
-                    <?php if (empty($loan_details)): ?>
+                    <?php
+                    if (empty($loan_details)): ?>
                       <tr class="tb-tnx-item">
                         <td colspan="6" class="text-center title">No Data Available</td>
                       </tr>
-                    <?php else:
-                      $sn = 1;
-                      $total_cr = 0;
-                      $total_dr = 0;
-                      $disbursed_date = null;
-                      if ($no_activity) {
-                        // no activity on the disbursed loan yet
-                        $total_dr = $loan_detail->amount;
-                        $date = date_create($loan_detail->disburse_date);
-                        $disbursed_date = date_format($date, 'd M Y');
-                      } else {
-                        foreach ($loan_details as $loan_detail) {
-                          $total_dr = $loan_detail->amount;
-                          $date = date_create($loan_detail->disburse_date);
-                          $disbursed_date = date_format($date, 'd M Y');
-                          $brought_forward = $loan_detail->amount;
+                    <?php
+                    else:
+                        $sn = 1;
+                        $total_cr = 0;
+                        $total_dr = 0;
+                        $disbursed_date = null;
+                        if ($no_activity) {
+                            // no activity on the disbursed loan yet
+                            $total_dr = $loan_detail->amount;
+                            $date = date_create($loan_detail->disburse_date);
+                            $disbursed_date = date_format($date, 'd M Y');
+                        } else {
+                            foreach ($loan_details as $loan_detail) {
+                                $total_dr = $loan_detail->amount;
+                                $date = date_create($loan_detail->disburse_date);
+                                $disbursed_date = date_format($date, 'd M Y');
+                                $brought_forward = $loan_detail->amount;
+                            }
                         }
-                      }
-                      ?>
+                        ?>
                       <tr class="tb-tnx-item">
                         <td class="font-weight-bolder"><?= $sn ?></td>
                         <td class="font-weight-bolder"><?= $disbursed_date ?></td>
@@ -195,66 +202,69 @@ $loan_detail = $loan_details[0];
                         <td class="text-right font-weight-bolder"><?= number_format(0, 2); ?></td>
                         <td class="text-right font-weight-bolder"><?= number_format($total_dr, 2); ?></td>
                       </tr>
-                      <?php if (!$no_activity): $sn++;
-                      foreach ($loan_details as $loan_detail): ?>
-                        <tr class="tb-tnx-item">
-                          <td><?= $sn ?></td>
-                          <td>
-                            <?php
-                            $date = date_create($loan_detail->lr_date);
-                            echo date_format($date, 'd M Y');
-                            ?>
-                          </td>
-                          <td>
-                            <?= $loan_detail->lr_narration; ?>
-                          </td>
-                          <td class="text-right">
-                            <?php
-                            if ($loan_detail->lr_dctype == 2):
-                              $dr = $loan_detail->lr_amount;
-                              $cr = 0;
-                              $total_dr += $dr;
-                              echo number_format($loan_detail->lr_amount, 2);
-                            else:
-                              echo number_format(0, 2);
-                            endif;
-                            ?>
-                          </td>
-                          <td class="text-right">
-                            <?php
-                            if ($loan_detail->lr_dctype == 1):
-                              $cr = $loan_detail->lr_amount;
-                              $dr = 0;
-                              $total_cr += $cr;
-                              echo number_format($loan_detail->lr_amount, 2);
-                            else:
-                              echo number_format(0, 2);
-                            endif;
-                            ?>
-                          </td>
-                          <td class="text-right">
-                            <?php
-                            $brought_forward = ($brought_forward + $dr) - $cr;
-                            echo number_format($brought_forward, 2);
-                            ?>
-                          </td>
-                        </tr>
-                        <?php $sn++; endforeach; endif; ?>
+                        <?php
+                        if (!$no_activity): $sn++;
+                            foreach ($loan_details as $loan_detail): ?>
+                              <tr class="tb-tnx-item">
+                                <td><?= $sn ?></td>
+                                <td>
+                                    <?php
+                                    $date = date_create($loan_detail->lr_date);
+                                    echo date_format($date, 'd M Y');
+                                    ?>
+                                </td>
+                                <td>
+                                    <?= $loan_detail->lr_narration; ?>
+                                </td>
+                                <td class="text-right">
+                                    <?php
+                                    if ($loan_detail->lr_dctype == 2):
+                                        $dr = $loan_detail->lr_amount;
+                                        $cr = 0;
+                                        $total_dr += $dr;
+                                        echo number_format($loan_detail->lr_amount, 2);
+                                    else:
+                                        echo number_format(0, 2);
+                                    endif;
+                                    ?>
+                                </td>
+                                <td class="text-right">
+                                    <?php
+                                    if ($loan_detail->lr_dctype == 1):
+                                        $cr = $loan_detail->lr_amount;
+                                        $dr = 0;
+                                        $total_cr += $cr;
+                                        echo number_format($loan_detail->lr_amount, 2);
+                                    else:
+                                        echo number_format(0, 2);
+                                    endif;
+                                    ?>
+                                </td>
+                                <td class="text-right">
+                                    <?php
+                                    $brought_forward = ($brought_forward + $dr) - $cr;
+                                    echo number_format($brought_forward, 2);
+                                    ?>
+                                </td>
+                              </tr>
+                                <?php
+                                $sn++; endforeach; endif; ?>
                       <tr class="tb-tnx-item font-weight-bolder">
                         <td>-</td>
                         <td></td>
                         <td>Total</td>
                         <td class="text-right">
-                          <?= number_format($total_dr, 2); ?>
+                            <?= number_format($total_dr, 2); ?>
                         </td>
                         <td class="text-right">
-                          <?= number_format($total_cr, 2); ?>
+                            <?= number_format($total_cr, 2); ?>
                         </td>
                         <td class="text-right">
-                          <?= number_format($total_dr - $total_cr, 2); ?>
+                            <?= number_format($total_dr - $total_cr, 2); ?>
                         </td>
                       </tr>
-                    <?php endif; ?>
+                    <?php
+                    endif; ?>
                     </tbody>
                   </table>
 
@@ -267,10 +277,10 @@ $loan_detail = $loan_details[0];
                       <p>
                         This is the periodic summary for this loan as at today
                         <em>
-                          <?php
-                          $date = date_create();
-                          echo date_format($date, 'd M Y');
-                          ?>
+                            <?php
+                            $date = date_create();
+                            echo date_format($date, 'd M Y');
+                            ?>
                         </em>
                         .
                       </p>
@@ -293,7 +303,8 @@ $loan_detail = $loan_details[0];
                             <div class="profile-ud wider">
                               <span class="profile-ud-label">Interest Rate</span>
                               <span
-                                class="profile-ud-value"><?= number_format($loan_detail->ls_interest_rate, 2); ?> %</span>
+                                class="profile-ud-value"><?= number_format($loan_detail->interest_rate,
+                                    2); ?> %</span>
                             </div>
                           </div>
                           <div class="profile-ud-item">
@@ -384,29 +395,31 @@ $loan_detail = $loan_details[0];
                       </tr>
                       </thead>
                       <tbody>
-                      <?php if (empty($loan_details)): ?>
+                      <?php
+                      if (empty($loan_details)): ?>
                         <tr>
                           <td colspan="6" class="text-center title">No Data Available</td>
                         </tr>
-                      <?php else:
-                        $sn = 1;
-                        $total_cr = 0;
-                        $total_dr = 0;
-                        $disbursed_date = null;
-                        if ($no_activity) {
-                          // no activity on the disbursed loan yet
-                          $total_dr = $loan_detail->amount;
-                          $date = date_create($loan_detail->disburse_date);
-                          $disbursed_date = date_format($date, 'd M Y');
-                        } else {
-                          foreach ($loan_details as $loan_detail) {
-                            $total_dr = $loan_detail->amount;
-                            $date = date_create($loan_detail->disburse_date);
-                            $disbursed_date = date_format($date, 'd M Y');
-                            $brought_forward = $loan_detail->amount;
+                      <?php
+                      else:
+                          $sn = 1;
+                          $total_cr = 0;
+                          $total_dr = 0;
+                          $disbursed_date = null;
+                          if ($no_activity) {
+                              // no activity on the disbursed loan yet
+                              $total_dr = $loan_detail->amount;
+                              $date = date_create($loan_detail->disburse_date);
+                              $disbursed_date = date_format($date, 'd M Y');
+                          } else {
+                              foreach ($loan_details as $loan_detail) {
+                                  $total_dr = $loan_detail->amount;
+                                  $date = date_create($loan_detail->disburse_date);
+                                  $disbursed_date = date_format($date, 'd M Y');
+                                  $brought_forward = $loan_detail->amount;
+                              }
                           }
-                        }
-                        ?>
+                          ?>
                         <tr>
                           <td class="font-weight-bolder"><?= $sn ?></td>
                           <td class="font-weight-bolder"><?= $disbursed_date ?></td>
@@ -415,66 +428,69 @@ $loan_detail = $loan_details[0];
                           <td class="text-right font-weight-bolder"><?= number_format(0, 2); ?></td>
                           <td class="text-right font-weight-bolder"><?= number_format($total_dr, 2); ?></td>
                         </tr>
-                        <?php if (!$no_activity): $sn++;
-                        foreach ($loan_details as $loan_detail): ?>
-                          <tr>
-                            <td><?= $sn ?></td>
-                            <td>
-                              <?php
-                              $date = date_create($loan_detail->lr_date);
-                              echo date_format($date, 'd M Y');
-                              ?>
-                            </td>
-                            <td>
-                              <?= $loan_detail->lr_narration; ?>
-                            </td>
-                            <td class="text-right">
-                              <?php
-                              if ($loan_detail->lr_dctype == 2):
-                                $dr = $loan_detail->lr_amount;
-                                $cr = 0;
-                                $total_dr += $dr;
-                                echo number_format($loan_detail->lr_amount, 2);
-                              else:
-                                echo number_format(0, 2);
-                              endif;
-                              ?>
-                            </td>
-                            <td class="text-right">
-                              <?php
-                              if ($loan_detail->lr_dctype == 1):
-                                $cr = $loan_detail->lr_amount;
-                                $dr = 0;
-                                $total_cr += $cr;
-                                echo number_format($loan_detail->lr_amount, 2);
-                              else:
-                                echo number_format(0, 2);
-                              endif;
-                              ?>
-                            </td>
-                            <td class="text-right">
-                              <?php
-                              $brought_forward = ($brought_forward + $dr) - $cr;
-                              echo number_format($brought_forward, 2);
-                              ?>
-                            </td>
-                          </tr>
-                          <?php $sn++; endforeach; endif; ?>
+                          <?php
+                          if (!$no_activity): $sn++;
+                              foreach ($loan_details as $loan_detail): ?>
+                                <tr>
+                                  <td><?= $sn ?></td>
+                                  <td>
+                                      <?php
+                                      $date = date_create($loan_detail->lr_date);
+                                      echo date_format($date, 'd M Y');
+                                      ?>
+                                  </td>
+                                  <td>
+                                      <?= $loan_detail->lr_narration; ?>
+                                  </td>
+                                  <td class="text-right">
+                                      <?php
+                                      if ($loan_detail->lr_dctype == 2):
+                                          $dr = $loan_detail->lr_amount;
+                                          $cr = 0;
+                                          $total_dr += $dr;
+                                          echo number_format($loan_detail->lr_amount, 2);
+                                      else:
+                                          echo number_format(0, 2);
+                                      endif;
+                                      ?>
+                                  </td>
+                                  <td class="text-right">
+                                      <?php
+                                      if ($loan_detail->lr_dctype == 1):
+                                          $cr = $loan_detail->lr_amount;
+                                          $dr = 0;
+                                          $total_cr += $cr;
+                                          echo number_format($loan_detail->lr_amount, 2);
+                                      else:
+                                          echo number_format(0, 2);
+                                      endif;
+                                      ?>
+                                  </td>
+                                  <td class="text-right">
+                                      <?php
+                                      $brought_forward = ($brought_forward + $dr) - $cr;
+                                      echo number_format($brought_forward, 2);
+                                      ?>
+                                  </td>
+                                </tr>
+                                  <?php
+                                  $sn++; endforeach; endif; ?>
                         <tr class=" font-weight-bolder">
                           <td>-</td>
                           <td></td>
                           <td>Total</td>
                           <td class="text-right">
-                            <?= number_format($total_dr, 2); ?>
+                              <?= number_format($total_dr, 2); ?>
                           </td>
                           <td class="text-right">
-                            <?= number_format($total_cr, 2); ?>
+                              <?= number_format($total_cr, 2); ?>
                           </td>
                           <td class="text-right">
-                            <?= number_format($total_dr - $total_cr, 2); ?>
+                              <?= number_format($total_dr - $total_cr, 2); ?>
                           </td>
                         </tr>
-                      <?php endif; ?>
+                      <?php
+                      endif; ?>
                       </tbody>
                     </table>
                   </div>
@@ -485,10 +501,12 @@ $loan_detail = $loan_details[0];
           </div>
         </div>
       </div>
-      <?php include(APPPATH . '/Views/_footer.php'); ?>
+        <?php
+        include(APPPATH . '/Views/_footer.php'); ?>
     </div>
   </div>
 </div>
-<?php include(APPPATH . '/Views/_scripts.php'); ?>
+<?php
+include(APPPATH . '/Views/_scripts.php'); ?>
 </body>
 </html>
