@@ -46,7 +46,7 @@ class Account extends ResourceController
             foreach ($savings_accounts as $key => $savings_account) {
                 $savings_type = $savings_account['sa_account_type'];
                 $savings_accounts[$key]['savings_type'] = $this->contributionTypeModel->where('contribution_type_id',
-                  $savings_type)->first();
+                    $savings_type)->first();
                 $payment_details = $this->paymentDetailModel->get_all_payment_details_by_id($staff_id, $savings_type);
                 $savings_accounts[$key]['savings_type']['payment_details'] = $payment_details;
                 $total_dr = 0;
@@ -63,8 +63,8 @@ class Account extends ResourceController
             }
 
             $response = [
-              'success' => true,
-              'account_details' => $savings_accounts
+                'success' => true,
+                'account_details' => $savings_accounts
             ];
             return $this->respond($response);
         } catch (\Exception $exception) {
@@ -78,8 +78,8 @@ class Account extends ResourceController
             $this->authLib->get_auth_user();
             $account_types = $this->contributionTypeModel->where('loans', 0)->findAll();
             $response = [
-              'success' => true,
-              'account_types' => $account_types
+                'success' => true,
+                'account_types' => $account_types
             ];
             return $this->respond($response);
         } catch (\Exception $exception) {
@@ -107,8 +107,8 @@ class Account extends ResourceController
 
             $account_no = $staff_id;
             $savings_account = $this->savingsAccountModel->where([
-              'sa_account_type' => $account_type,
-              'sa_account_no' => $account_no
+                'sa_account_type' => $account_type,
+                'sa_account_no' => $account_no
             ])->first();
 
             if ($savings_account) {
@@ -116,10 +116,10 @@ class Account extends ResourceController
             }
 
             $savings_account = [
-              'sa_account_type' => $account_type,
-              'sa_reason' => $reason,
-              'sa_account_no' => $account_no,
-              'sa_creation_date' => date('Y-m-d')
+                'sa_account_type' => $account_type,
+                'sa_reason' => $reason,
+                'sa_account_no' => $account_no,
+                'sa_creation_date' => date('Y-m-d')
             ];
             $this->savingsAccountModel->save($savings_account);
 
@@ -130,21 +130,21 @@ class Account extends ResourceController
 
             if ($contribution_type['fee'] > 0) {
                 $payment_detail = [
-                  "pd_staff_id" => $account_no,
-                  "pd_transaction_date" => date('Y-m-d'),
-                  "pd_narration" => "Activation Fee",
-                  "pd_amount" => $contribution_type['fee'],
-                  "pd_payment_type" => "1",
-                  "pd_drcrtype" => "2",
-                  "pd_ct_id" => $contribution_type['contribution_type_id'],
-                  "pd_pg_id" => null,
-                  "pd_ref_code" => time(),
-                  "pd_month" => date('m'),
-                  "pd_year" => date('Y'),
-                  "\tpd_upload_date" => null,
-                  "pd_upload_by" => null,
-                  "pd_processed_date" => null,
-                  "pd_processed_by" => $account_no,
+                    "pd_staff_id" => $account_no,
+                    "pd_transaction_date" => date('Y-m-d'),
+                    "pd_narration" => "Activation Fee",
+                    "pd_amount" => $contribution_type['fee'],
+                    "pd_payment_type" => "1",
+                    "pd_drcrtype" => "2",
+                    "pd_ct_id" => $contribution_type['contribution_type_id'],
+                    "pd_pg_id" => null,
+                    "pd_ref_code" => time(),
+                    "pd_month" => date('m'),
+                    "pd_year" => date('Y'),
+                    "\tpd_upload_date" => null,
+                    "pd_upload_by" => null,
+                    "pd_processed_date" => null,
+                    "pd_processed_by" => $account_no,
                 ];
                 $this->paymentDetailModel->save($payment_detail);
 
@@ -153,37 +153,37 @@ class Account extends ResourceController
                 $othername = $user['cooperator_other_name'];
 
                 $gl_1 = [
-                  "glcode" => intval($contribution_type['contribution_type_glcode']),
-                  "posted_by" => $account_no,
-                  "narration" => $contribution_type['contribution_type_name'] . ' Activation Fee',
-                  "gl_description" => $account_no . ' - ' . $firstname . ' ' . $othername . ' ' . $lastname,
-                  "gl_transaction_date" => date('Y-m-d'),
-                  "dr_amount" => $contribution_type['fee'],
-                  "cr_amount" => "0",
-                  "ref_no" => time(),
-                  "bank" => "0",
-                  "ob" => "0",
-                  "posted" => "1",
-                  "created_at" => date('Y-m-d'),
-                  'branch' => $user['cooperator_branch_id'],
+                    "glcode" => intval($contribution_type['contribution_type_glcode']),
+                    "posted_by" => $account_no,
+                    "narration" => $contribution_type['contribution_type_name'] . ' Activation Fee',
+                    "gl_description" => $account_no . ' - ' . $firstname . ' ' . $othername . ' ' . $lastname,
+                    "gl_transaction_date" => date('Y-m-d'),
+                    "dr_amount" => $contribution_type['fee'],
+                    "cr_amount" => "0",
+                    "ref_no" => time(),
+                    "bank" => "0",
+                    "ob" => "0",
+                    "posted" => "1",
+                    "created_at" => date('Y-m-d'),
+                    'branch' => $user['cooperator_branch_id'],
                 ];
 
                 $this->GLModel->save($gl_1);
 
                 $gl_2 = [
-                  "glcode" => 41109,
-                  "posted_by" => $account_no,
-                  "narration" => $contribution_type['contribution_type_name'] . ' Activation Fee',
-                  "gl_description" => $account_no . ' - ' . $firstname . ' ' . $othername . ' ' . $lastname,
-                  "gl_transaction_date" => date('Y-m-d'),
-                  "cr_amount" => $contribution_type['fee'],
-                  "dr_amount" => "0",
-                  "ref_no" => time(),
-                  "bank" => "0",
-                  "ob" => "0",
-                  "posted" => "1",
-                  "created_at" => date('Y-m-d'),
-                  'branch' => $user['cooperator_branch_id'],
+                    "glcode" => 41109,
+                    "posted_by" => $account_no,
+                    "narration" => $contribution_type['contribution_type_name'] . ' Activation Fee',
+                    "gl_description" => $account_no . ' - ' . $firstname . ' ' . $othername . ' ' . $lastname,
+                    "gl_transaction_date" => date('Y-m-d'),
+                    "cr_amount" => $contribution_type['fee'],
+                    "dr_amount" => "0",
+                    "ref_no" => time(),
+                    "bank" => "0",
+                    "ob" => "0",
+                    "posted" => "1",
+                    "created_at" => date('Y-m-d'),
+                    'branch' => $user['cooperator_branch_id'],
                 ];
 
                 $this->GLModel->save($gl_2);
@@ -192,12 +192,102 @@ class Account extends ResourceController
             $this->db->transComplete();
 
             $response = [
-              'success' => true,
-              'msg' => 'Your savings account was created successfully'
+                'success' => true,
+                'msg' => 'Your savings account was created successfully'
             ];
             return $this->respond($response);
         } catch (\Exception $exception) {
             return $this->fail($exception->getMessage());
         }
+    }
+
+    public function get_account_statement()
+    {
+        try {
+            $user = $this->authLib->get_auth_user();
+            $staff_id = $user['cooperator_staff_id'];
+
+            $account_type = $this->request->getVar('account_type');
+            if (!$account_type) {
+                return $this->failValidationErrors('Account type is required');
+            }
+            $startDate = $this->request->getGet('start_date');
+            if (!$startDate) {
+                return $this->failValidationErrors('Start date is required');
+            }
+            $endDate = $this->request->getGet('end_date');
+            if (!$endDate) {
+                return $this->failValidationErrors('End date is required');
+            }
+            $amount = $this->request->getGet('amount');
+            $remark = $this->request->getGet('remark');
+
+            $savingsType = $this->contributionTypeModel->where('contribution_type_id', $account_type)->first();
+            if (!$savingsType) {
+                return $this->failNotFound('Account type does not exist');
+            }
+
+            if (\DateTime::createFromFormat('d-m-Y', $startDate)) {
+                $startDate = $this->_convert_date_to_Ymd($startDate);
+            }
+
+            if (\DateTime::createFromFormat('d-m-Y', $endDate)) {
+                $endDate = $this->_convert_date_to_Ymd($endDate);
+            }
+
+            $balance = 0;
+            $paymentDetails = $this->paymentDetailModel->get_payment_details_by_date_range_filtered($staff_id, $account_type, $startDate, $endDate, $amount, $remark);
+            $broughtForward = $this->_get_brought_forward($staff_id, $account_type, $startDate);
+            if ($broughtForward) $balance = $broughtForward;
+            $total_dr = 0;
+            $total_cr = 0;
+
+            foreach ($paymentDetails as $paymentDetail) {
+                if ($paymentDetail->pd_drcrtype == 2) {
+                    $balance -= $paymentDetail->pd_amount;
+                    $total_dr += $paymentDetail->pd_amount;
+                }
+                if ($paymentDetail->pd_drcrtype == 1) {
+                    $balance += $paymentDetail->pd_amount;
+                    $total_cr += $paymentDetail->pd_amount;
+                }
+            }
+
+            $ledger = array(
+                'payment_details' => $paymentDetails,
+                'brought_forward' => $broughtForward,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'total_dr' => $total_dr,
+                'total_cr' => $total_cr,
+                'balance' => $balance
+            );
+
+            $response = [
+                'success' => true,
+                'data' => $ledger
+            ];
+            return $this->respond($response);
+
+        } catch (\Exception $exception) {
+            return $this->fail($exception->getMessage());
+        }
+    }
+
+    private function _convert_date_to_Ymd($date): string
+    {
+        return \DateTime::createFromFormat('d-m-Y', $date)->format('Y-m-d');
+    }
+
+    private function _get_brought_forward($staff_id, $savings_type, $start_date): int
+    {
+        $payment_details = $this->paymentDetailModel->get_payment_details_before_date($staff_id, $savings_type, $start_date);
+        $total_dr = 0;
+        $total_cr = 0;
+        foreach ($payment_details as $payment_detail) {
+            if ($payment_detail->pd_drcrtype == 1) $total_cr += $payment_detail->pd_amount;
+            if ($payment_detail->pd_drcrtype == 2) $total_dr += $payment_detail->pd_amount;
+        }
+        return $total_cr - $total_dr;
     }
 }

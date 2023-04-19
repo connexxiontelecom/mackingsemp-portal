@@ -12,22 +12,22 @@ class PaymentDetailModel extends Model
     protected $table = 'payment_details';
     protected $primaryKey = 'pd_id';
     protected $allowedFields = [
-      'pd_id',
-      'pd_staff_id',
-      'pd_transaction_date',
-      'pd_narration',
-      'pd_amount',
-      'pd_payment_type',
-      'pd_drcrtype',
-      'pd_ct_id',
-      'pd_pg_id',
-      'pd_ref_code',
-      'pd_month',
-      'pd_year',
-      '\tpd_upload_date',
-      'pd_upload_by',
-      'pd_processed_date',
-      'pd_processed_by',
+        'pd_id',
+        'pd_staff_id',
+        'pd_transaction_date',
+        'pd_narration',
+        'pd_amount',
+        'pd_payment_type',
+        'pd_drcrtype',
+        'pd_ct_id',
+        'pd_pg_id',
+        'pd_ref_code',
+        'pd_month',
+        'pd_year',
+        '\tpd_upload_date',
+        'pd_upload_by',
+        'pd_processed_date',
+        'pd_processed_by',
     ];
 
     public function __construct()
@@ -59,6 +59,22 @@ class PaymentDetailModel extends Model
         $this->query_builder->where('pd_ct_id', $savings_type);
         $this->query_builder->where('pd_transaction_date >=', $start_date);
         $this->query_builder->where('pd_transaction_date <=', $end_date);
+        $this->query_builder->orderBy('pd_transaction_date', 'asc');
+        return $this->query_builder->get()->getResult();
+    }
+
+    public function get_payment_details_by_date_range_filtered($staff_id, $savings_type, $start_date, $end_date, $amount = null, $remark = null): array
+    {
+        $this->query_builder->where('pd_staff_id', $staff_id);
+        $this->query_builder->where('pd_ct_id', $savings_type);
+        $this->query_builder->where('pd_transaction_date >=', $start_date);
+        $this->query_builder->where('pd_transaction_date <=', $end_date);
+
+        if ($amount)
+            $this->query_builder->where('pd_amount', $amount);
+        if ($remark)
+            $this->query_builder->like('pd_narration', $remark);
+
         $this->query_builder->orderBy('pd_transaction_date', 'asc');
         return $this->query_builder->get()->getResult();
     }

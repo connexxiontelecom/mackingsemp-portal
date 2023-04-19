@@ -97,6 +97,7 @@ $routes->post('api/auth/cooperator/enquiry', 'API\Auth::post_cooperator_enquiry'
 $routes->get('api/account', 'API\Account::get_all_account_details', ['filter' => 'authFilter']);
 $routes->get('api/account/types', 'API\Account::get_all_account_types', ['filter' => 'authFilter']);
 $routes->post('api/account', 'API\Account::post_new_savings_account', ['filter' => 'authFilter']);
+$routes->get('api/account/statement', 'API\Account::get_account_statement', ['filter' => 'authFilter']);
 
 $routes->get('api/loan/(:num)', 'API\Loan::get_loan/$1', ['filter' => 'authFilter']);
 $routes->post('api/loan', 'API\Loan::post_new_loan_application', ['filter' => 'authFilter']);
