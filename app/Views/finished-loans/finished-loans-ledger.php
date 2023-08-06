@@ -69,7 +69,8 @@ $loan_detail = $loan_details[0];
                             <div class="profile-ud-item">
                               <div class="profile-ud wider">
                                 <span class="profile-ud-label">Interest Rate</span>
-                                <span class="profile-ud-value"><?= number_format($loan_detail->ls_interest_rate, 2); ?> %</span>
+                                <span
+                                  class="profile-ud-value"><?= number_format($loan_detail->interest_rate, 2); ?> %</span>
                               </div>
                             </div>
                             <div class="profile-ud-item">
@@ -292,7 +293,7 @@ $loan_detail = $loan_details[0];
                             <div class="profile-ud wider">
                               <span class="profile-ud-label">Interest Rate</span>
                               <span
-                                class="profile-ud-value"><?= number_format($loan_detail->ls_interest_rate, 2); ?> %</span>
+                                class="profile-ud-value"><?= number_format($loan_detail->interest_rate, 2); ?> %</span>
                             </div>
                           </div>
                           <div class="profile-ud-item">
