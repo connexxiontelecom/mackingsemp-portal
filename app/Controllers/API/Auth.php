@@ -96,7 +96,7 @@ class Auth extends ResourceController
                 $curlData = array(
                     'api_key' => getenv('TERMII_API_KEY'),
                     'to' => $phone,
-                    'from' => getenv('TERMII_SENDER_ID'),
+                    'from' => 'mackingsemp',
                     'sms' => $message,
                     "type" => "plain",
                     "channel" => "generic"
@@ -580,7 +580,7 @@ class Auth extends ResourceController
                 $curlData = array(
                     'api_key' => getenv('TERMII_API_KEY'),
                     'to' => $phone,
-                    'from' => getenv('TERMII_SENDER_ID'),
+                    'from' => 'N-Alert',
                     'sms' => $message,
                     "type" => "plain",
                     "channel" => "dnd"
