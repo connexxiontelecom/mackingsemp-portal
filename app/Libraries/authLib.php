@@ -36,4 +36,24 @@ class authLib
         return $cooperator;
     }
 
+    public function change_to_nigerian_intl_format($phoneNumber)
+    {
+        // Remove non-numeric characters from the phone number
+        $phoneNumber = preg_replace('/[^0-9]/', '', $phoneNumber);
+
+        // Check if the number starts with '0' (local) or '234' (Nigeria country code)
+        if (substr($phoneNumber, 0, 1) == '0') {
+            // Remove leading '0' and add '234' country code
+            $formattedNumber = '234' . substr($phoneNumber, 1);
+        } elseif (substr($phoneNumber, 0, 3) == '234') {
+            // Number already has country code
+            $formattedNumber = $phoneNumber;
+        } else {
+            // Default to assuming it's a local number, add '234' country code
+            $formattedNumber = '234' . $phoneNumber;
+        }
+
+        return $formattedNumber;
+    }
+
 }

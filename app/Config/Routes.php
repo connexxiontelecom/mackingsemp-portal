@@ -93,6 +93,7 @@ $routes->get('api/auth/cooperator', 'API\Auth::get_cooperator_details', ['filter
 $routes->patch('api/auth/cooperator/details', 'API\Auth::patch_cooperator_details', ['filter' => 'authFilter']);
 $routes->patch('api/auth/cooperator/password', 'API\Auth::patch_cooperator_password', ['filter' => 'authFilter']);
 $routes->post('api/auth/cooperator/enquiry', 'API\Auth::post_cooperator_enquiry', ['filter' => 'authFilter']);
+$routes->post('api/auth/resend-otp', 'API\Auth::post_resend_otp');
 
 $routes->get('api/account', 'API\Account::get_all_account_details', ['filter' => 'authFilter']);
 $routes->get('api/account/types', 'API\Account::get_all_account_types', ['filter' => 'authFilter']);

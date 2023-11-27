@@ -13,6 +13,7 @@ use CodeIgniter\HTTP\Response;
 use CodeIgniter\RESTful\ResourceController;
 use Firebase\JWT\JWT;
 
+
 class Auth extends ResourceController
 {
     use ResponseTrait;
@@ -77,21 +78,54 @@ class Auth extends ResourceController
             $passwordResetModel->save($data);
 
             $emailService->setTo($email);
-            $emailService->setSubject('Your Mobile Platform Registration OTP');
+            $emailService->setSubject('Your MackingsEmp Mobile Platform Registration OTP');
             $mail_data = [
-              'user' => $cooperator['cooperator_first_name'] . ' ' . $cooperator['cooperator_last_name'],
-              'token' => $plaintext,
+                'user' => $cooperator['cooperator_first_name'] . ' ' . $cooperator['cooperator_last_name'],
+                'token' => $plaintext,
             ];
             $body = view('mail/register-otp', $mail_data);
             $emailService->setMessage($body);
             if (!$emailService->send(false)) {
                 return $this->failServerError('An error occurred. Please try again later.');
             }
+            $phone = $cooperator['cooperator_telephone'];
+            if ($phone) {
+                $message = 'Your MackingsEmp Mobile Platform Registration OTP is ' . $plaintext . '. Do not share this code with anyone.';
+                $phone = $this->authLib->change_to_nigerian_intl_format($phone);
+                $curl = curl_init();
+                $curlData = array(
+                    'api_key' => getenv('TERMII_API_KEY'),
+                    'to' => $phone,
+                    'from' => getenv('TERMII_SENDER_ID'),
+                    'sms' => $message,
+                    "type" => "plain",
+                    "channel" => "generic"
+                );
+                $postData = json_encode($curlData);
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => getenv('TERMII_SMS_URL'),
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => "",
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => "POST",
+                    CURLOPT_POSTFIELDS => $postData,
+                    CURLOPT_HTTPHEADER => array(
+                        "Content-Type: application/json"
+                    ),
+                ));
+                $response = curl_exec($curl);
+                curl_close($curl);
+
+                log_message('error', $response);
+            }
 
             $response = [
-              'success' => true,
-              'message' => 'OTP sent to cooperator email',
-              'cooperator_email' => $cooperator['cooperator_email']
+                'success' => true,
+                'message' => 'OTP sent to cooperator email and phone number',
+                'cooperator_email' => $cooperator['cooperator_email']
             ];
             return $this->respond($response);
         } catch (\Exception $exception) {
@@ -137,15 +171,15 @@ class Auth extends ResourceController
             $emailService->setTo($email);
             $emailService->setSubject('Registration Success');
             $mail_data = [
-              'user' => $cooperator['cooperator_first_name'] . ' ' . $cooperator['cooperator_last_name'],
+                'user' => $cooperator['cooperator_first_name'] . ' ' . $cooperator['cooperator_last_name'],
             ];
             $body = view('mail/register-success', $mail_data);
             $emailService->setMessage($body);
             $emailService->send(false);
 
             $response = [
-              'success' => true,
-              'message' => 'Registration successful please login to begin'
+                'success' => true,
+                'message' => 'Registration successful please login to begin'
             ];
             return $this->respond($response);
         } catch (\Exception $exception) {
@@ -175,9 +209,9 @@ class Auth extends ResourceController
             }
 
             $cooperator = $cooperatorModel->where('cooperator_email', $user)
-              ->orWhere('cooperator_staff_id', $user)
-              ->orWhere('cooperator_telephone', $user)
-              ->first();
+                ->orWhere('cooperator_staff_id', $user)
+                ->orWhere('cooperator_telephone', $user)
+                ->first();
             if (!$cooperator) {
                 return $this->failNotFound('Cooperator with those credentials does not exist');
             }
@@ -200,19 +234,19 @@ class Auth extends ResourceController
             $iat = time();
             $exp = $iat + 3600;
             $payload = array(
-              "iss" => "Mackings Empowerment Initiative",
-              "aud" => "Members Mackingsemp",
-              "sub" => $user,
-              "iat" => $iat, //Time the JWT issued at
-              "exp" => $exp, // Expiration time of token
-              "email" => $cooperator['cooperator_email'],
+                "iss" => "Mackings Empowerment Initiative",
+                "aud" => "Members Mackingsemp",
+                "sub" => $user,
+                "iat" => $iat, //Time the JWT issued at
+                "exp" => $exp, // Expiration time of token
+                "email" => $cooperator['cooperator_email'],
             );
             $token = JWT::encode($payload, $key, 'HS256');
 
             $emailService->setTo($cooperator['cooperator_email']);
             $emailService->setSubject('Login Success');
             $mail_data = [
-              'user' => $cooperator['cooperator_first_name'] . ' ' . $cooperator['cooperator_last_name'],
+                'user' => $cooperator['cooperator_first_name'] . ' ' . $cooperator['cooperator_last_name'],
             ];
             $body = view('mail/login-success', $mail_data);
             $emailService->setMessage($body);
@@ -220,10 +254,10 @@ class Auth extends ResourceController
 
             $cooperator['cooperator_password'] = null;
             $response = [
-              'success' => true,
-              'message' => 'Login successful',
-              'token' => $token,
-              'cooperator' => $cooperator
+                'success' => true,
+                'message' => 'Login successful',
+                'token' => $token,
+                'cooperator' => $cooperator
             ];
             return $this->respond($response);
         } catch (\Exception $exception) {
@@ -239,8 +273,8 @@ class Auth extends ResourceController
             $user['cooperator_bank'] = $this->bankModel->find($user['cooperator_bank_id']) ?? null;
             $user['cooperator_group'] = $this->groupModel->find($user['cooperator_group_id']) ?? null;
             $response = [
-              'success' => true,
-              'cooperator' => $user
+                'success' => true,
+                'cooperator' => $user
             ];
             return $this->respond($response);
         } catch (\Exception $exception) {
@@ -264,16 +298,16 @@ class Auth extends ResourceController
             }
 
             $cooperator_data = [
-              'cooperator_id' => $user['cooperator_id'],
-              'cooperator_email' => $email,
-              'cooperator_telephone' => $phone
+                'cooperator_id' => $user['cooperator_id'],
+                'cooperator_email' => $email,
+                'cooperator_telephone' => $phone
             ];
 
             $this->cooperatorModel->save($cooperator_data);
 
             $response = [
-              'success' => true,
-              'msg' => 'Cooperator details updated successfully'
+                'success' => true,
+                'msg' => 'Cooperator details updated successfully'
             ];
             return $this->respond($response);
         } catch (\Exception $exception) {
@@ -309,14 +343,14 @@ class Auth extends ResourceController
             }
 
             $cooperator_data = [
-              'cooperator_id' => $user['cooperator_id'],
-              'cooperator_password' => password_hash($new_password, PASSWORD_DEFAULT)
+                'cooperator_id' => $user['cooperator_id'],
+                'cooperator_password' => password_hash($new_password, PASSWORD_DEFAULT)
             ];
             $this->cooperatorModel->save($cooperator_data);
 
             $response = [
-              'success' => true,
-              'msg' => 'Cooperator password updated successfully'
+                'success' => true,
+                'msg' => 'Cooperator password updated successfully'
             ];
             return $this->respond($response);
         } catch (\Exception $exception) {
@@ -341,26 +375,26 @@ class Auth extends ResourceController
             }
 
             $enquiry = [
-              'staff_id' => $user['cooperator_staff_id'],
-              'subject' => $subject,
-              'message' => $message
+                'staff_id' => $user['cooperator_staff_id'],
+                'subject' => $subject,
+                'message' => $message
             ];
             $this->enquiriesModel->save($enquiry);
 
             $emailService->setTo('support@mackingsemp.com');
             $emailService->setSubject('New Cooperator Enquiry/Feedback');
             $mail_data = [
-              'user' => $user['cooperator_first_name'] . ' ' . $user['cooperator_last_name'] . ', ' . $user['cooperator_staff_id'],
-              'subject' => $subject,
-              'message' => $message
+                'user' => $user['cooperator_first_name'] . ' ' . $user['cooperator_last_name'] . ', ' . $user['cooperator_staff_id'],
+                'subject' => $subject,
+                'message' => $message
             ];
             $body = view('mail/enquiry', $mail_data);
             $emailService->setMessage($body);
             $emailService->send(false);
 
             $response = [
-              'success' => true,
-              'msg' => 'Enquiry sent successfully'
+                'success' => true,
+                'msg' => 'Enquiry sent successfully'
             ];
             return $this->respond($response);
         } catch (\Exception $exception) {
@@ -412,16 +446,16 @@ class Auth extends ResourceController
             $emailService->setTo($cooperator['cooperator_email']);
             $emailService->setSubject('Password Reset');
             $mail_data = [
-              'user' => $cooperator['cooperator_first_name'] . ' ' . $cooperator['cooperator_last_name'],
-              'token' => $plaintext
+                'user' => $cooperator['cooperator_first_name'] . ' ' . $cooperator['cooperator_last_name'],
+                'token' => $plaintext
             ];
             $body = view('mail/forgot-password', $mail_data);
             $emailService->setMessage($body);
             $emailService->send(false);
 
             $response = [
-              'success' => true,
-              'msg' => 'Password reset token sent to your email'
+                'success' => true,
+                'msg' => 'Password reset token sent to your email'
             ];
             return $this->respond($response);
         } catch (\Exception $exception) {
@@ -466,8 +500,8 @@ class Auth extends ResourceController
             }
 
             $cooperator_data = [
-              'cooperator_id' => $cooperator['cooperator_id'],
-              'cooperator_password' => password_hash($new_password, PASSWORD_DEFAULT)
+                'cooperator_id' => $cooperator['cooperator_id'],
+                'cooperator_password' => password_hash($new_password, PASSWORD_DEFAULT)
             ];
             $this->cooperatorModel->save($cooperator_data);
 
@@ -476,7 +510,7 @@ class Auth extends ResourceController
             $emailService->setTo($cooperator['cooperator_email']);
             $emailService->setSubject('Password Reset Success');
             $mail_data = [
-              'user' => $cooperator['cooperator_first_name'] . ' ' . $cooperator['cooperator_last_name'],
+                'user' => $cooperator['cooperator_first_name'] . ' ' . $cooperator['cooperator_last_name'],
             ];
 
             $body = view('mail/reset-success', $mail_data);
@@ -484,8 +518,98 @@ class Auth extends ResourceController
             $emailService->send(false);
 
             $response = [
-              'success' => true,
-              'msg' => 'Cooperator password reset successfully'
+                'success' => true,
+                'msg' => 'Cooperator password reset successfully'
+            ];
+            return $this->respond($response);
+        } catch (\Exception $exception) {
+            return $this->fail($exception->getMessage());
+        }
+    }
+
+    public function post_resend_otp(): Response
+    {
+        try {
+            $emailService = \Config\Services::email();
+
+            $cooperator_email = $this->request->getVar('cooperator_email') ?? null;
+            if (!$cooperator_email) {
+                return $this->fail('Cooperator email is required');
+            }
+
+            $cooperator = $this->cooperatorModel->where('cooperator_email', $cooperator_email)->first();
+            if (!$cooperator) {
+                return $this->failNotFound('Cooperator with that email does not exist');
+            }
+
+            $imei = $cooperator['cooperator_imei'];
+            if ($imei) {
+                return $this->fail('Profile already exists. Proceed to login');
+            }
+
+            $characters = '01234567890123456789';
+            $plaintext = '';
+            for ($i = 0; $i < 4; $i++) {
+                $index = rand(0, strlen($characters) - 1);
+                $plaintext .= $characters[$index];
+            }
+            $data['token'] = hash("sha256", $plaintext);
+            $data['email'] = $cooperator_email;
+            $passwordResetToken = $this->passwordResetTokenModel->where('email', $cooperator_email)->first();
+            if ($passwordResetToken) {
+                $data['id'] = $passwordResetToken['id'];
+            }
+            $this->passwordResetTokenModel->save($data);
+
+            $emailService->setTo($cooperator_email);
+            $emailService->setSubject('Your MackingsEmp Mobile Platform Registration OTP');
+            $mail_data = [
+                'user' => $cooperator['cooperator_first_name'] . ' ' . $cooperator['cooperator_last_name'],
+                'token' => $plaintext,
+            ];
+            $body = view('mail/register-otp', $mail_data);
+            $emailService->setMessage($body);
+            if (!$emailService->send(false)) {
+                return $this->failServerError('An error occurred. Please try again later.');
+            }
+            $phone = $cooperator['cooperator_telephone'];
+            if ($phone) {
+                $message = 'Your MackingsEmp Mobile Platform Registration OTP is ' . $plaintext . '. Do not share this code with anyone.';
+                $phone = $this->authLib->change_to_nigerian_intl_format($phone);
+                $curl = curl_init();
+                $curlData = array(
+                    'api_key' => getenv('TERMII_API_KEY'),
+                    'to' => $phone,
+                    'from' => getenv('TERMII_SENDER_ID'),
+                    'sms' => $message,
+                    "type" => "plain",
+                    "channel" => "dnd"
+                );
+                $postData = json_encode($curlData);
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => getenv('TERMII_SMS_URL'),
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => "",
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => "POST",
+                    CURLOPT_POSTFIELDS => $postData,
+                    CURLOPT_HTTPHEADER => array(
+                        "Content-Type: application/json"
+                    ),
+                ));
+                $response = curl_exec($curl);
+                curl_close($curl);
+
+                log_message('error', $response);
+            }
+
+            $response = [
+                'success' => true,
+                'message' => 'OTP resent to cooperator email and phone number',
+                'cooperator_email' => $cooperator['cooperator_email']
             ];
             return $this->respond($response);
         } catch (\Exception $exception) {
